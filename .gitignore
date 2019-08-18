@@ -1,0 +1,8 @@
+#intellij project files
+.idea/*
+
+#build files
+.gradle/*
+gradle/*
+build/*
+out/*
