@@ -1,3 +1,5 @@
+package cadmium
+
 import org.openqa.selenium.By
 
 /**

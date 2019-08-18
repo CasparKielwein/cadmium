@@ -1,3 +1,5 @@
+package cadmium
+
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -14,7 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
  *
  * WebElement forwards most calls to selenium.WebElement.
  * Use its Documentation for detailed informations.
- * @see https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html
+ *
+ *  See: https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html>
  *
  * @property driver Instance of Selenium WebDriver driving parent Browser instance
  * @property defaultWait default Wait, Methods use when trying to interact with WebElements
@@ -39,7 +42,7 @@ class WebElement(
     /**
      * Enter text or key-presses to this element, wait default timeout for it to become visible
      *
-     * @param text character sequence to send to the element
+     * @param[text] character sequence to send to the element
      */
     fun enter(text: CharSequence): WebElement {
         hooks.onEnter(locator, text)
@@ -57,6 +60,9 @@ class WebElement(
         return this
     }
 
+    /**
+     * Get Text of WebElement
+     */
     val text: String
         get() = driver.findElement(locator).text
 
@@ -68,6 +74,11 @@ class WebElement(
     val selected: Boolean
         get() = driver.findElement(locator).isSelected
 
+    /**
+     * Determine if an element is enabled or not.
+     *
+     * It is true if element is enabled (All elements apart from disabled input elements) and false if otherwise.
+     */
     val enabled: Boolean
         get() = driver.findElement(locator).isEnabled
 
@@ -82,10 +93,11 @@ class WebElement(
     /**
      * Get the value of the given attribute of the element.
      *
-     * returns the attribute/property's current value or null if the value is not set.
-     * @param name The name of the attribute
+     * @param[name] The name of the attribute
      *
-     * @see https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute-java.lang.String-
+     * @returns the attribute/property's current value or null if the value is not set.
+     *
+     * See: https://www.seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute-java.lang.String-
      */
     fun getAttribute(name: String): String? = driver.findElement(locator).getAttribute(name)
 }

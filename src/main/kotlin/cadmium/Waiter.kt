@@ -1,3 +1,5 @@
+package cadmium
+
 import com.kizitonwose.time.*
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By

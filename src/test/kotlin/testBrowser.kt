@@ -1,3 +1,6 @@
+package cadmium_test
+
+import cadmium.*
 import org.openqa.selenium.Keys
 import kotlin.test.Test
 import org.openqa.selenium.firefox.FirefoxBinary

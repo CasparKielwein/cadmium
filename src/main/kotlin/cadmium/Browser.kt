@@ -1,3 +1,5 @@
+package cadmium
+
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -13,6 +15,9 @@ class Browser(
     val defaultWait: WebDriverWait = WebDriverWait(driver, 10),
     var hooks: InteractionHooks = InteractionHooks()
 ) {
+    /**
+     * Opens a windows with the given URL
+     */
     fun open(url: String) {
         driver.get(url)
     }
