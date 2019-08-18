@@ -7,12 +7,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
 
+fun waitFor(time: Interval<TimeUnit>) {
+    Thread.sleep(time.inMilliseconds.longValue)
+}
 
-fun waitFor(time : Interval<TimeUnit>) { Thread.sleep(time.inMilliseconds.longValue) }
+fun Browser.waitFor(p: PageLoad) {
+    p.wait(driver)
+}
 
-fun Browser.waitFor(p : PageLoad) { p.wait(driver)}
-
-fun waitFor(v : () -> Boolean) { TODO(v.toString())}
+fun waitFor(v: () -> Boolean) {
+    TODO(v.toString())
+}
 
 /**
  * https://blog.codeship.com/get-selenium-to-wait-for-page-load/
