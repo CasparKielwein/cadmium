@@ -1,4 +1,3 @@
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -12,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 class Browser(
     val driver: WebDriver,
     val defaultWait: WebDriverWait = WebDriverWait(driver, 10),
-    var hooks: SeleniumHooks = SeleniumHooks()
+    var hooks: InteractionHooks = InteractionHooks()
 ) {
     fun open(url: String) {
         driver.get(url)
@@ -36,13 +35,3 @@ class Browser(
 
     fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
 }
-
-/**
- * Provides Hooks for Callbacks which are executed on browser actions.
- *
- * These can be used to add debug output or slow actions down to make them more observable.
- */
-data class SeleniumHooks(
-    val onClick: (locator: By) -> Unit = {},
-    val onEnter: (locator: By, text: CharSequence) -> Unit = { _: By, _: CharSequence -> }
-)

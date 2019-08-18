@@ -25,7 +25,7 @@ class WebElement(
     private val driver: WebDriver,
     private val defaultWait: WebDriverWait,
     private val locator: By,
-    private val hooks: SeleniumHooks
+    private val hooks: InteractionHooks
 ) {
     /**
      * Click this element, wait default timeout for it to become visible
