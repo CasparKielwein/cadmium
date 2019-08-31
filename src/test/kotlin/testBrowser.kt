@@ -9,21 +9,21 @@ import org.openqa.selenium.firefox.FirefoxOptions
 import java.net.URL
 import kotlin.test.assertEquals
 
-fun setUpFirefox(): FirefoxDriver {
+fun setUpFirefox(): Browser {
     val firefoxBinary = FirefoxBinary()
     firefoxBinary.addCommandLineOptions("--headless", "--no-remote")
 
     val firefoxOptions = FirefoxOptions()
     firefoxOptions.binary = firefoxBinary
 
-    return FirefoxDriver(firefoxOptions)
+    return Browser(FirefoxDriver(firefoxOptions))
 }
 
 class TestBrowser {
 
     @Test
     fun testMinimalExample() {
-        Browser(setUpFirefox()).browse(URL("https://en.wikipedia.org/wiki")) {
+        setUpFirefox().browse(URL("https://en.wikipedia.org/wiki")) {
             element(Id("searchInput"))
                 .enter("cheese")
                 .enter(Keys.ENTER)
@@ -32,5 +32,4 @@ class TestBrowser {
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }
     }
-
 }

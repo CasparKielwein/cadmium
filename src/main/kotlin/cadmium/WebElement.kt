@@ -15,9 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * This means that all interactions throw Exceptions when Element has become stale or cannot be found.
  *
  * WebElement forwards most calls to selenium.WebElement.
- * Use its Documentation for detailed informations.
- *
- *  See: https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html>
+ * Use its Documentation for detailed information.
+ * @see org.openqa.selenium.WebElement
  *
  * @property driver Instance of Selenium WebDriver driving parent Browser instance
  * @property defaultWait default Wait, Methods use when trying to interact with WebElements

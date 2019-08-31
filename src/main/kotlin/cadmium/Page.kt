@@ -9,22 +9,61 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
 
-class Page(val basURL: URL, private val b: Browser) {
+/**
+ * Represents a single page opened with Selenium WebDriver
+ *
+ * @property baseURL property that is used to resolve all relative URL
+ * @property b Browser instance driving this page
+ */
+class Page(private val baseURL: URL, private val b: Browser) {
 
-    fun open(relativeUrl: URL): Page {
-        b.driver.get("$basURL/$relativeUrl")
+    /**
+     * Open browser on baseURL
+     */
+    init {
+        b.driver.get(baseURL.toString())
+    }
+
+    /**
+     * Open given relative URL from current baseURL
+     *
+     * @param relativeUrl relative URL as seen from current baseURL
+     * @param actions excecuted on Page after opening URL
+     */
+    fun open(relativeUrl: URL, actions: Page.() -> Unit = {}): Page {
+        b.driver.get("$baseURL/$relativeUrl")
+        actions()
         return this
+    }
+
+    /**
+     * Apply given actions on page.
+     *
+     * Visit both as in visiting a page and the Visitor pattern
+     */
+    fun visit(actions: Page.() -> Unit) {
+        actions()
     }
 
     /**
      * Get WebElement by locator, the most used function to interact with pages
      *
      * @param loc Locator used to identify the Element
+     * @param waiter optionally controls how long WebDriver is supposed to wait until it errors out.
      * @return WebElement found by given Locator
      * if multiple elements match the locator, the first is returned
      */
-    fun element(loc: Locator): WebElement = WebElement(b.driver, b.defaultWait, loc.by, b.hooks)
+    fun element(loc: Locator, waiter: WebDriverWait = b.defaultWait): WebElement =
+        WebElement(b.driver, waiter, loc.by, b.hooks)
 
+    /**
+     * Get a WebElement and apply given actions on it
+     *
+     * @param loc Locator used to identify the Element
+     * @param actions Extension Function on WebElement which is executed on returned element
+     * @return WebElement found by given Locator
+     * if multiple elements match the locator, the first is returned
+     */
     fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
         val e = WebElement(b.driver, b.defaultWait, loc.by, b.hooks)
         e.actions()
@@ -32,10 +71,29 @@ class Page(val basURL: URL, private val b: Browser) {
     }
 
     /**
+     * Find all elements within the current page using the given mechanism.
+     *
+     * @param loc The locating mechanism to use
+     * @param waiter optionally controls how long WebDriver is supposed to wait until empty List is returned
+     * @return A list of all WebElements, or an empty list if nothing matches
+     * @see element
+     *
+     * At the moment elements is eager and the WebElements returned are not evaluated lazily
+     * as claimed in their documentation.
+     * Todo: return a lazily evaluated range of WebELements instead
+     */
+    fun elements(loc: Locator, waiter: WebDriverWait = b.defaultWait): List<WebElement> {
+        return b.driver.findElements(loc.by).map { WebElement(b.driver, waiter, loc.by, b.hooks) }
+    }
+
+    /**
      * Shorthand for click on element given by locator ( element(loc).click() )
      */
     fun click(loc: Locator) = element(loc).click()
 
+    /**
+     * Shorthand for clicking on input element with given test as value
+     */
     fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
 
     /**
@@ -48,10 +106,12 @@ class Page(val basURL: URL, private val b: Browser) {
     fun waitForAlert(timeOut: Interval<TimeUnit> = 10.seconds): Alert {
         assert(timeOut.inSeconds.longValue > 0)
         for (i in 0..timeOut.inSeconds.longValue) try {
-            return Alert(b)
+            return Alert(b.driver.switchTo().alert())
         } catch (e: NoAlertPresentException) {
             Thread.sleep(1000)
         }
+
+        b.hooks.onFail(NoAlertPresentException())
         throw NoAlertPresentException()
     }
 
