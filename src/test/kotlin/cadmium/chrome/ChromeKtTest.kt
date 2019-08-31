@@ -1,21 +1,19 @@
-package cadmium_test
+package cadmium.chrome
 
-import cadmium.*
-import cadmium.firefox.headlessFirefox
+import cadmium.Id
 import org.openqa.selenium.Keys
 import kotlin.test.Test
 import java.net.URL
 import kotlin.test.assertEquals
 
-internal class TestBrowser {
+internal class TestChrome {
 
     @Test
     fun testMinimalExample() {
-        headlessFirefox().browse(URL("https://en.wikipedia.org/wiki")) {
+        headlessChrome().browse(URL("https://en.wikipedia.org/wiki")) {
             element(Id("searchInput"))
                 .enter("cheese")
                 .enter(Keys.ENTER)
-            waitForPageLoad()
 
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }

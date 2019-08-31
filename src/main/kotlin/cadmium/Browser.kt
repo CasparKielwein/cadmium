@@ -11,7 +11,7 @@ import java.net.URL
  * @property defaultWait default Wait, Methods use when searching for WebElements
  * @property hooks hook functions executed on interactions with WebElements
  */
-class Browser(
+open class Browser(
     val driver: WebDriver,
     val defaultWait: WebDriverWait = WebDriverWait(driver, 10),
     var hooks: InteractionHooks = InteractionHooks()
