@@ -19,6 +19,6 @@ class Alert(private val alert: org.openqa.selenium.Alert) {
      */
     val text: String
         get() {
-            return alert.text;
+            return alert.text
         }
 }

@@ -28,7 +28,7 @@ class Page(private val baseURL: URL, private val b: Browser) {
      * Open given relative URL from current baseURL
      *
      * @param relativeUrl relative URL as seen from current baseURL
-     * @param actions excecuted on Page after opening URL
+     * @param actions executed on Page after opening URL
      */
     fun open(relativeUrl: URL, actions: Page.() -> Unit = {}): Page {
         b.driver.get("$baseURL/$relativeUrl")
@@ -100,7 +100,7 @@ class Page(private val baseURL: URL, private val b: Browser) {
      * Waits for an Alert to appear
      *
      * @param timeOut max wait Time for Alert to appear
-     * @throws NoAlertPresentException if no alert appears until timeOut
+     * @throws org.openqa.selenium.NoAlertPresentException if no alert appears until timeOut
      * @return handle to present Alert
      */
     fun waitForAlert(timeOut: Interval<TimeUnit> = 10.seconds): Alert {

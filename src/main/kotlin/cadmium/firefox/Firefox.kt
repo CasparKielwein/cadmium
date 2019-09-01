@@ -5,9 +5,7 @@ import org.openqa.selenium.firefox.FirefoxBinary
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
 
-class Firefox(driver: FirefoxDriver) : Browser(driver) {
-
-}
+class Firefox(driver: FirefoxDriver) : Browser(driver)
 
 fun headlessFirefox(): Firefox {
     val firefoxBinary = FirefoxBinary()

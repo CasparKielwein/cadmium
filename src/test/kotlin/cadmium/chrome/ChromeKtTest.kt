@@ -1,6 +1,7 @@
-package cadmium.chrome
+package cadmium_test.cadmium.chrome
 
-import cadmium.Id
+import cadmium.*
+import cadmium.chrome.headlessChrome
 import org.openqa.selenium.Keys
 import kotlin.test.Test
 import java.net.URL

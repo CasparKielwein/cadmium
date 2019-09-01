@@ -6,7 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 
 class Chrome(driver: ChromeDriver) : Browser(driver)
 
-fun headlessChrome() : Chrome {
+fun headlessChrome(): Chrome {
     val options = ChromeOptions()
     options.setBinary("/usr/bin/chromium-browser")
     options.addArguments("--headless")

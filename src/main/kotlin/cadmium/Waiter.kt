@@ -1,12 +1,7 @@
 package cadmium
 
-import com.kizitonwose.time.*
-import org.openqa.selenium.Alert
-import org.openqa.selenium.By
-import org.openqa.selenium.NoAlertPresentException
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
+import com.kizitonwose.time.Interval
+import com.kizitonwose.time.TimeUnit
 
 
 fun waitFor(time: Interval<TimeUnit>) {

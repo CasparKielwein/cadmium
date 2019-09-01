@@ -17,14 +17,19 @@ data class InteractionHooks(
 )
 
 /**
- * Prints used WebWelement on every action
+ * Hooks that do nothing
+ */
+fun noHooks() = InteractionHooks()
+
+/**
+ * Prints used WebElement on every action
  */
 fun talky(): InteractionHooks {
     return InteractionHooks(onClick = {
         println("Will click on $it")
     }, onEnter = { locator: By, text: CharSequence ->
         println("Will enter '$text' into $locator")
-    }, onFail = { ex : Exception ->
+    }, onFail = { ex: Exception ->
         println("Action failed with error $ex")
     })
 }
