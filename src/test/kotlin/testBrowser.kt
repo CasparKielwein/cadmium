@@ -20,4 +20,13 @@ internal class TestBrowser {
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }
     }
+
+    @Test
+    fun testRelativeURL() {
+        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki"))
+
+        val cheesePage = mainPage.open("cheese")
+
+        assertEquals("Cheese", cheesePage.element(Id("firstHeading")).text)
+    }
 }

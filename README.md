@@ -4,6 +4,9 @@
 Cadmium is a browser automation library based on Selenium.
 It leverages the power of the Kotlin language to use of Selenium simple and concise
 
+Cadmium can be used to to simplify testing but unlike selenide is not a test framework itself.
+Cadmium can be used independently of test and/or assert libraries.
+
 ## Why not Selenium directly?
 * Selenium-java is somewhat verbose as is often the case in java
 * Calling a java library directly in Kotlin causes issues with null safety.

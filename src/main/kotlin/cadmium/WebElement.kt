@@ -31,17 +31,21 @@ class WebElement(
 ) {
     /**
      * Click this element, wait default timeout for it to become visible
+     *
+     * @return this to allow chaining of operations
      */
-    fun click() {
+    fun click(): WebElement {
         hooks.onClick(locator)
         defaultWait.until(ExpectedConditions.visibilityOfElementLocated(locator))
         driver.findElement(locator).click()
+        return this
     }
 
     /**
      * Enter text or key-presses to this element, wait default timeout for it to become visible
      *
      * @param[text] character sequence to send to the element
+     * @return this to allow chaining of operations
      */
     fun enter(text: CharSequence): WebElement {
         hooks.onEnter(locator, text)
@@ -52,6 +56,8 @@ class WebElement(
 
     /**
      * If this element is a text entry element, this will clear the value.
+     *
+     * @return this to allow chaining of operations
      */
     fun clear(): WebElement {
         defaultWait.until(ExpectedConditions.visibilityOfElementLocated(locator))

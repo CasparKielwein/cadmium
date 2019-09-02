@@ -12,10 +12,13 @@ import java.net.URL
 /**
  * Represents a single page opened with Selenium WebDriver
  *
+ * Page is one of the core Classes of cadmium.
+ * Extend it with your own classes to implement page objects.
+ *
  * @property baseURL property that is used to resolve all relative URL
  * @property b Browser instance driving this page
  */
-class Page(private val baseURL: URL, private val b: Browser) {
+open class Page(private val baseURL: URL, private val b: Browser) {
 
     /**
      * Open browser on baseURL
@@ -29,20 +32,12 @@ class Page(private val baseURL: URL, private val b: Browser) {
      *
      * @param relativeUrl relative URL as seen from current baseURL
      * @param actions executed on Page after opening URL
+     * @sample cadmium_test.TestBrowser.testRelativeURL
      */
-    fun open(relativeUrl: URL, actions: Page.() -> Unit = {}): Page {
+    fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Page {
         b.driver.get("$baseURL/$relativeUrl")
         actions()
         return this
-    }
-
-    /**
-     * Apply given actions on page.
-     *
-     * Visit both as in visiting a page and the Visitor pattern
-     */
-    fun visit(actions: Page.() -> Unit) {
-        actions()
     }
 
     /**
@@ -80,7 +75,7 @@ class Page(private val baseURL: URL, private val b: Browser) {
      *
      * At the moment elements is eager and the WebElements returned are not evaluated lazily
      * as claimed in their documentation.
-     * Todo: return a lazily evaluated range of WebELements instead
+     * Todo: return a lazily evaluated range of WebElements instead
      */
     fun elements(loc: Locator, waiter: WebDriverWait = b.defaultWait): List<WebElement> {
         return b.driver.findElements(loc.by).map { WebElement(b.driver, waiter, loc.by, b.hooks) }
@@ -97,7 +92,7 @@ class Page(private val baseURL: URL, private val b: Browser) {
     fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
 
     /**
-     * Waits for an Alert to appear
+     * Waits for an Alert dialog to appear
      *
      * @param timeOut max wait Time for Alert to appear
      * @throws org.openqa.selenium.NoAlertPresentException if no alert appears until timeOut
@@ -120,9 +115,23 @@ class Page(private val baseURL: URL, private val b: Browser) {
      *
      * Idea is taken from:
      * https://blog.codeship.com/get-selenium-to-wait-for-page-load/
+     *
+     * @return this to allow chaining of method calls
      */
-    fun waitForPageLoad(timeOut: Interval<TimeUnit> = 10.seconds) {
+    fun waitForPageLoad(timeOut: Interval<TimeUnit> = 10.seconds): Page {
         val oldPage = b.driver.findElement(By.tagName("html"))
         WebDriverWait(b.driver, timeOut.longValue).until(ExpectedConditions.stalenessOf(oldPage))
+        return this
     }
+}
+
+/**
+ * Apply given actions on page.
+ *
+ * Visit both as in visiting a page and the Visitor pattern
+ *
+ * @param actions applied to page object
+ */
+fun <T : Page> T.visit(actions: T.() -> Unit) {
+    actions()
 }

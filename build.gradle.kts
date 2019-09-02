@@ -48,5 +48,6 @@ tasks {
     dokka {
         outputFormat = "html"
         outputDirectory = "$buildDir/javadoc"
+        samples = listOf("src/test/kotlin/testBrowser.kt")
     }
 }

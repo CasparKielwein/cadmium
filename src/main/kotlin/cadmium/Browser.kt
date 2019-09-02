@@ -10,6 +10,7 @@ import java.net.URL
  * @property driver Instance of Selenium WebDriver driving the Browser instance
  * @property defaultWait default Wait, Methods use when searching for WebElements
  * @property hooks hook functions executed on interactions with WebElements
+ * @sample cadmium_test.TestBrowser.testMinimalExample
  */
 open class Browser(
     val driver: WebDriver,
