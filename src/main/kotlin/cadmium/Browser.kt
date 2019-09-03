@@ -35,6 +35,7 @@ open class Browser(
      */
     fun browse(url: URL, actions: Page.() -> Unit) {
         open(url).actions()
+        hooks.beforeClose()
         driver.close()
     }
 }

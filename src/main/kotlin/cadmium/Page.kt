@@ -25,6 +25,7 @@ open class Page(private val baseURL: URL, private val b: Browser) {
      */
     init {
         b.driver.get(baseURL.toString())
+        b.hooks.afterOpen(baseURL)
     }
 
     /**
@@ -36,6 +37,7 @@ open class Page(private val baseURL: URL, private val b: Browser) {
      */
     fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Page {
         b.driver.get("$baseURL/$relativeUrl")
+        b.hooks.afterOpen(URL("$baseURL/$relativeUrl"))
         actions()
         return this
     }
