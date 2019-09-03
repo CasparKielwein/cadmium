@@ -1,6 +1,9 @@
 # Cadmium
 ## Simple Browser Automation in Kotlin
 
+
+[![Build Status](https://travis-ci.org/CasparKielwein/cadmium.svg?branch=master)](https://travis-ci.org/CasparKielwein/cadmium)
+
 Cadmium is a browser automation library based on Selenium.
 It leverages the power of the Kotlin language to use of Selenium simple and concise
 
