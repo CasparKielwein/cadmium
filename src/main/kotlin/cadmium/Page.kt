@@ -125,6 +125,25 @@ open class Page(private val baseURL: URL, private val b: Browser) {
         WebDriverWait(b.driver, timeOut.longValue).until(ExpectedConditions.stalenessOf(oldPage))
         return this
     }
+
+    /**
+     * The source of the current page
+     *
+     * If the page has been modified after loading (for
+     * example, by Javascript) there is no guarantee that the returned text is that of the modified
+     * page.
+     *
+     * @see org.openqa.selenium.WebDriver.getPageSource
+     */
+    val source: String
+        get() = b.driver.pageSource
+
+    /**
+     * The title of the current page, with leading and trailing whitespace stripped, or null
+     * if one is not already set
+     */
+    val title: String?
+        get() = b.driver.title
 }
 
 /**

@@ -33,6 +33,9 @@ class WebElement(
      * Click this element, wait default timeout for it to become visible
      *
      * @return this to allow chaining of operations
+     *
+     * The element must be visible and it must have a height and width
+     * greater then 0.
      */
     fun click(): WebElement {
         hooks.onClick(locator)
