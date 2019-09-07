@@ -1,6 +1,6 @@
 package cadmium
 
-import org.openqa.selenium.By
+import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -18,17 +18,50 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * Use its Documentation for detailed information.
  * @see org.openqa.selenium.WebElement
  *
- * @property driver Instance of Selenium WebDriver driving parent Browser instance
- * @property defaultWait default Wait, Methods use when trying to interact with WebElements
+ * @property find ElementLocator used to search for the element when interacting with it
+ * @property wait default Wait, Methods use when trying to interact with WebElements
  * @property locator Selenium Locator used to retrieve Element
  * @property hooks hook functions executed on interactions Element
  */
 class WebElement(
-    private val driver: WebDriver,
-    private val defaultWait: WebDriverWait,
-    private val locator: By,
+    private val find: ElementLocator,
+    private var wait: WebDriverWait,
+    private val locator: Locator,
     private val hooks: InteractionHooks
-) {
+) : SearchContext {
+
+    /**
+     * Get a nested WebElement and apply given actions on it
+     *
+     * @param loc Locator used to identify the Element
+     * @param actions Extension Function on WebElement which is executed on returned element
+     * @return WebElement nested in this element found by given Locator
+     * if multiple elements match the locator, the first is returned
+     */
+    override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
+        val e = WebElement(NestedLocator(this), wait, loc, hooks)
+        e.actions()
+        return e    }
+
+    /**
+     * Find all elements within the current element using the given mechanism.
+     *
+     * @param loc The locating mechanism to use
+     * @param waiter optionally controls how long WebDriver is supposed to wait until empty List is returned
+     * @return A list of all WebElements, or an empty list if nothing matches
+     * @see element
+     */
+    override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
+        return find(locator)
+            .findElements(loc.by)
+            .map { WebElement(NestedLocator(this), waiter, loc, hooks) }
+    }
+
+    /**
+     * overload of elements without dedicated wait parameter
+     */
+    override fun elements(loc: Locator): List<WebElement>  = elements(loc, wait)
+
     /**
      * Click this element, wait default timeout for it to become visible
      *
@@ -39,8 +72,8 @@ class WebElement(
      */
     fun click(): WebElement {
         hooks.onClick(locator)
-        defaultWait.until(ExpectedConditions.visibilityOfElementLocated(locator))
-        driver.findElement(locator).click()
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
+        find(locator).click()
         return this
     }
 
@@ -52,8 +85,8 @@ class WebElement(
      */
     fun enter(text: CharSequence): WebElement {
         hooks.onEnter(locator, text)
-        defaultWait.until(ExpectedConditions.visibilityOfElementLocated(locator))
-        driver.findElement(locator).sendKeys(text)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
+        find(locator).sendKeys(text)
         return this
     }
 
@@ -63,8 +96,21 @@ class WebElement(
      * @return this to allow chaining of operations
      */
     fun clear(): WebElement {
-        defaultWait.until(ExpectedConditions.visibilityOfElementLocated(locator))
-        driver.findElement(locator).clear()
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
+        find(locator).clear()
+        return this
+    }
+
+    /**
+     * If this current element is a form, or an element within a form, then this will be submitted to
+     * the remote server. If this causes the current page to change, then this method will block until
+     * the new page is loaded.
+     *
+     * @throws org.openqa.selenium.NoSuchElementException If the given element is not within a form
+     * @return this to allow chaining of operations
+     */
+    fun submit(): WebElement {
+        find(locator).submit()
         return this
     }
 
@@ -72,7 +118,7 @@ class WebElement(
      * Get Text of WebElement
      */
     val text: String
-        get() = driver.findElement(locator).text
+        get() = find(locator).text
 
     /**
      * Determine whether or not this element is selected or not.
@@ -80,7 +126,7 @@ class WebElement(
      * This operation only applies to input elements such as checkboxes, options in a select and radio buttons.
      */
     val selected: Boolean
-        get() = driver.findElement(locator).isSelected
+        get() = find(locator).isSelected
 
     /**
      * Determine if an element is enabled or not.
@@ -88,7 +134,13 @@ class WebElement(
      * It is true if element is enabled (All elements apart from disabled input elements) and false if otherwise.
      */
     val enabled: Boolean
-        get() = driver.findElement(locator).isEnabled
+        get() = find(locator).isEnabled
+
+    /**
+     * Is this element displayed or not?
+     */
+    val displayed: Boolean
+        get() = find(locator).isDisplayed
 
     /**
      * Attribute value of element or null if no value exists
@@ -107,5 +159,29 @@ class WebElement(
      *
      * See: https://www.seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute-java.lang.String-
      */
-    fun getAttribute(name: String): String? = driver.findElement(locator).getAttribute(name)
+    fun getAttribute(name: String): String? = find(locator).getAttribute(name)
+
+    internal val actualElement : org.openqa.selenium.WebElement
+        get() = find(locator)
+}
+
+/**
+ * Bundles location functions with objects needed
+ */
+sealed class ElementLocator {
+    abstract operator fun invoke(loc: Locator): org.openqa.selenium.WebElement
+}
+
+/**
+ * Locate Elements through WebDriver
+ */
+class DriverLocator(private val driver: WebDriver) : ElementLocator() {
+    override fun invoke(loc: Locator) = driver.findElement(loc.by)!!
+}
+
+/**
+ * Locate Elements nested in other Element
+ */
+class NestedLocator(private val element: WebElement) : ElementLocator() {
+    override fun invoke(loc: Locator): org.openqa.selenium.WebElement = element.actualElement.findElement(loc.by)!!
 }

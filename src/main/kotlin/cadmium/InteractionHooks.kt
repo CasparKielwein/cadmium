@@ -1,6 +1,5 @@
 package cadmium
 
-import org.openqa.selenium.By
 import java.net.URL
 
 /**
@@ -16,8 +15,8 @@ import java.net.URL
 data class InteractionHooks(
     val afterOpen: (url: URL) -> Unit = {},
     val beforeClose: () -> Unit = {},
-    val onClick: (locator: By) -> Unit = {},
-    val onEnter: (locator: By, text: CharSequence) -> Unit = { _: By, _: CharSequence -> },
+    val onClick: (locator: Locator) -> Unit = {},
+    val onEnter: (locator: Locator, text: CharSequence) -> Unit = { _: Locator, _: CharSequence -> },
     val onFail: (ex: Exception) -> Unit = {}
 )
 
@@ -36,7 +35,7 @@ fun talky(): InteractionHooks {
         println("Closing Window")
     }, onClick = {
         println("Will click on $it")
-    }, onEnter = { locator: By, text: CharSequence ->
+    }, onEnter = { locator: Locator, text: CharSequence ->
         println("Will enter '$text' into $locator")
     }, onFail = { ex: Exception ->
         println("Action failed with error $ex")
@@ -51,7 +50,7 @@ fun slowDown(): InteractionHooks {
         Thread.sleep(250)
     }, onClick = {
         Thread.sleep(250)
-    }, onEnter = { _: By, _: CharSequence ->
+    }, onEnter = { _: Locator, _: CharSequence ->
         Thread.sleep(250)
     })
 }

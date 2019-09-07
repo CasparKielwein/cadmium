@@ -1,7 +1,7 @@
 package test
 
 import cadmium.Locator
-import cadmium.Page
+import cadmium.SearchContext
 import cadmium.WebElement
 
 /**
@@ -17,7 +17,7 @@ import cadmium.WebElement
  * @param loc mechanism used to search for elements
  * @return true if page has an element found with given locator, false if not
  */
-fun Page.hasElement(loc: Locator) = this.elements(loc).isNotEmpty()
+fun SearchContext.hasElement(loc: Locator) = this.elements(loc).isNotEmpty()
 
 /**
  * @param attribute Name of the attribute to search for

@@ -18,7 +18,7 @@ import java.net.URL
  * @property baseURL property that is used to resolve all relative URL
  * @property b Browser instance driving this page
  */
-open class Page(private val baseURL: URL, private val b: Browser) {
+open class Page(private val baseURL: URL, private val b: Browser) : SearchContext {
 
     /**
      * Open browser on baseURL
@@ -43,17 +43,6 @@ open class Page(private val baseURL: URL, private val b: Browser) {
     }
 
     /**
-     * Get WebElement by locator, the most used function to interact with pages
-     *
-     * @param loc Locator used to identify the Element
-     * @param waiter optionally controls how long WebDriver is supposed to wait until it errors out.
-     * @return WebElement found by given Locator
-     * if multiple elements match the locator, the first is returned
-     */
-    fun element(loc: Locator, waiter: WebDriverWait = b.defaultWait): WebElement =
-        WebElement(b.driver, waiter, loc.by, b.hooks)
-
-    /**
      * Get a WebElement and apply given actions on it
      *
      * @param loc Locator used to identify the Element
@@ -61,8 +50,8 @@ open class Page(private val baseURL: URL, private val b: Browser) {
      * @return WebElement found by given Locator
      * if multiple elements match the locator, the first is returned
      */
-    fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(b.driver, b.defaultWait, loc.by, b.hooks)
+    override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
+        val e = WebElement(DriverLocator(b.driver), b.defaultWait, loc, b.hooks)
         e.actions()
         return e
     }
@@ -79,9 +68,14 @@ open class Page(private val baseURL: URL, private val b: Browser) {
      * as claimed in their documentation.
      * Todo: return a lazily evaluated range of WebElements instead
      */
-    fun elements(loc: Locator, waiter: WebDriverWait = b.defaultWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(b.driver, waiter, loc.by, b.hooks) }
+    override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
+        return b.driver.findElements(loc.by).map { WebElement(DriverLocator(b.driver), waiter, loc, b.hooks) }
     }
+
+    /**
+     * overload of elements which uses defaultWait
+     */
+    override fun elements(loc: Locator): List<WebElement> = elements(loc, b.defaultWait)
 
     /**
      * Shorthand for click on element given by locator ( element(loc).click() )
