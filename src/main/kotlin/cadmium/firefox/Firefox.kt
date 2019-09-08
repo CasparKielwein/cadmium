@@ -5,14 +5,42 @@ import org.openqa.selenium.firefox.FirefoxBinary
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
 
+/**
+ * Represents Firefox Webbroser
+ */
 class Firefox(driver: FirefoxDriver) : Browser(driver)
 
-fun headlessFirefox(): Firefox {
-    val firefoxBinary = FirefoxBinary()
-    firefoxBinary.addCommandLineOptions("--headless", "--no-remote")
+/**
+ * Configuration object for Firefox
+ *
+ * @see org.openqa.selenium.firefox.FirefoxBinary
+ * @see org.openqa.selenium.firefox.FirefoxOptions
+ */
+class FirefoxConfig(
+    var options: FirefoxOptions,
+    var binary: FirefoxBinary
+)
 
-    val firefoxOptions = FirefoxOptions()
-    firefoxOptions.binary = firefoxBinary
+/**
+ * Initialize a Firefox with custom configuration
+ *
+ * @param configAction executed on FirefoxConfig object before that is used to initialize FirefoxWebDriver
+ * @return Firefox configured with given configuration
+ * @sample headlessFirefox
+ */
+fun firefox(configAction: FirefoxConfig.() -> Unit = {}): Firefox {
+    val config = FirefoxConfig(FirefoxOptions(), FirefoxBinary())
+    //apply user configurations
+    config.configAction()
 
-    return Firefox(FirefoxDriver(firefoxOptions))
+    config.options.binary = config.binary
+    return Firefox(FirefoxDriver(config.options))
 }
+
+/**
+ * Shortcut to start Firefox in headless mode
+ */
+fun headlessFirefox() = firefox {
+    options.setHeadless(true)
+}
+

@@ -14,7 +14,7 @@ import java.net.URL
  */
 open class Browser(
     val driver: WebDriver,
-    val defaultWait: WebDriverWait = WebDriverWait(driver, 10),
+    var defaultWait: WebDriverWait = WebDriverWait(driver, 10),
     var hooks: InteractionHooks = InteractionHooks()
 ) {
     /**
