@@ -28,8 +28,6 @@ dependencies {
     compile("org.seleniumhq.selenium:selenium-firefox-driver:3.141.59")
     compile("org.seleniumhq.selenium:selenium-server:3.141.59")
     compile("org.seleniumhq.selenium:selenium-java:3.141.59")
-
-    compile("com.github.kizitonwose.time:time:1.0.3")
 }
 
 configure<JavaPluginConvention> {

@@ -3,6 +3,9 @@ package cadmium
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 /**
  * Core Class representing a running browser instance
@@ -39,3 +42,9 @@ open class Browser(
         driver.close()
     }
 }
+
+@UseExperimental(ExperimentalTime::class)
+open class BrowserConfig(
+    var defaultTimeout: Duration = 10.seconds,
+    var hooks: InteractionHooks = InteractionHooks()
+)

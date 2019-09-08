@@ -1,13 +1,13 @@
 package cadmium
 
-import com.kizitonwose.time.Interval
-import com.kizitonwose.time.TimeUnit
-import com.kizitonwose.time.seconds
 import org.openqa.selenium.By
 import org.openqa.selenium.NoAlertPresentException
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 /**
  * Represents a single page opened with Selenium WebDriver
@@ -94,9 +94,9 @@ open class Page(private val baseURL: URL, private val b: Browser) : SearchContex
      * @throws org.openqa.selenium.NoAlertPresentException if no alert appears until timeOut
      * @return handle to present Alert
      */
-    fun waitForAlert(timeOut: Interval<TimeUnit> = 10.seconds): Alert {
-        assert(timeOut.inSeconds.longValue > 0)
-        for (i in 0..timeOut.inSeconds.longValue) try {
+    @UseExperimental(ExperimentalTime::class)
+    fun waitForAlert(timeOut: Duration = 10.seconds): Alert {
+        for (i in 0..timeOut.inSeconds.toLong()) try {
             return Alert(b.driver.switchTo().alert())
         } catch (e: NoAlertPresentException) {
             Thread.sleep(1000)
@@ -114,9 +114,10 @@ open class Page(private val baseURL: URL, private val b: Browser) : SearchContex
      *
      * @return this to allow chaining of method calls
      */
-    fun waitForPageLoad(timeOut: Interval<TimeUnit> = 10.seconds): Page {
+    @UseExperimental(ExperimentalTime::class)
+    fun waitForPageLoad(timeOut: Duration = 10.seconds): Page {
         val oldPage = b.driver.findElement(By.tagName("html"))
-        WebDriverWait(b.driver, timeOut.longValue).until(ExpectedConditions.stalenessOf(oldPage))
+        WebDriverWait(b.driver, timeOut.inSeconds.toLong()).until(ExpectedConditions.stalenessOf(oldPage))
         return this
     }
 

@@ -1,11 +1,12 @@
 package cadmium
 
-import com.kizitonwose.time.Interval
-import com.kizitonwose.time.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 
-fun waitFor(time: Interval<TimeUnit>) {
-    Thread.sleep(time.inMilliseconds.longValue)
+@ExperimentalTime
+fun waitFor(time: Duration) {
+    Thread.sleep(time.inMilliseconds.toLong())
 }
 
 fun waitFor(v: () -> Boolean) {

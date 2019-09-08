@@ -1,6 +1,7 @@
 package cadmium.firefox
 
 import cadmium.Browser
+import cadmium.BrowserConfig
 import org.openqa.selenium.firefox.FirefoxBinary
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
@@ -19,10 +20,10 @@ class Firefox(driver: FirefoxDriver) : Browser(driver)
 class FirefoxConfig(
     var options: FirefoxOptions,
     var binary: FirefoxBinary
-)
+) : BrowserConfig()
 
 /**
- * Initialize a Firefox with custom configuration
+ * Initialize a Firefox instance with custom configuration
  *
  * @param configAction executed on FirefoxConfig object before that is used to initialize FirefoxWebDriver
  * @return Firefox configured with given configuration
