@@ -11,12 +11,17 @@ internal class TestBrowser {
 
     @Test
     fun testMinimalExample() {
-        headlessFirefox().browse(URL("https://en.wikipedia.org/wiki")) {
-            element(Id("searchInput"))
-                .enter("cheese")
-                .enter(Keys.ENTER)
-            waitForPageLoad()
+        //constructs object representing running browser
+        val firefox = headlessFirefox()
+        //get Page object pointing to wikipedia and use it
+        firefox.browse(URL("https://en.wikipedia.org/wiki")) {
+            //get element searchInput and interact with it
+            element(Id("searchInput")) {
+                enter("cheese")
+                enter(Keys.ENTER)
+            }
 
+            waitForPageLoad()
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }
     }
