@@ -1,6 +1,9 @@
 package cadmium
 
+import com.google.common.collect.Iterables.toArray
 import org.openqa.selenium.By
+import org.openqa.selenium.support.pagefactory.ByAll
+import org.openqa.selenium.support.pagefactory.ByChained
 
 /**
  * Mechanism used to locate WebElement within a Document.
@@ -90,3 +93,37 @@ class PartialLink(text: String) : Locator() {
 class Tag(v: String) : Locator() {
     override val by = By.tagName(v)!!
 }
+
+/**
+ * Mechanism to search for elements which fulfill all given requirements
+ */
+class AllOf(vararg mechanisms: Locator) : Locator() {
+    override val by = makeChained(mechanisms)
+
+    private fun makeChained(mechanisms: Array<out Locator>): ByChained {
+        val bys: Array<By> = mechanisms.map{ it.by }.toTypedArray()
+        return ByChained(*bys)
+    }
+}
+
+/**
+ * Mechanism to search for elements which fulfill any single one of the given requirements
+ */
+class AnyOf(vararg mechanisms: Locator) : Locator() {
+    override val by = makeAll(mechanisms)
+
+    private fun makeAll(mechanisms: Array<out Locator>): ByAll {
+        val bys: Array<By> = mechanisms.map{ it.by }.toTypedArray()
+        return ByAll(*bys)
+    }
+}
+
+/**
+ * Combine two Mechanisms to a new one which requires both to be fulfilled
+ */
+infix fun Locator.and(rhs: Locator) = AllOf(this, rhs)
+
+/**
+ * Combine two Mechanisms to a new one which requires any one to be fulfilled
+ */
+infix fun Locator.or(rhs: Locator) = AnyOf(this, rhs)
