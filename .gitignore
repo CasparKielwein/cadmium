@@ -3,6 +3,5 @@
 
 #build files
 .gradle/*
-gradle/*
 build/*
 out/*
