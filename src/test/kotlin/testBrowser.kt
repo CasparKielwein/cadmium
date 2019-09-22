@@ -1,6 +1,7 @@
 package cadmium_test
 
 import cadmium.*
+import cadmium.firefox.firefox
 import cadmium.firefox.headlessFirefox
 import org.openqa.selenium.Keys
 import kotlin.test.Test
@@ -47,9 +48,20 @@ internal class TestBrowser {
                 enter(Keys.ENTER)
             }
 
+            //wit until pageload has been triggered, using waitUntil dsl
             waitUntil(pageLoad)
             assertEquals("Cheese", element(Id("firstHeading")).text)
+
+            open("Main_Page")
+
+            element(Id("searchInput")) {
+                enter("Bacon")
+                enter(Keys.ENTER)
+            }
+
+            //wait until header changed to "Bacon" using waitUntil dsl
+            waitUntil{ element(Id("firstHeading")).with { text == "Bacon" }}
+            assertEquals("Bacon", element(Id("firstHeading")).text)
         }
     }
-
 }

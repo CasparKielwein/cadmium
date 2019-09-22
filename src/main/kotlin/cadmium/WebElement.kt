@@ -1,6 +1,5 @@
 package cadmium
 
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -161,6 +160,17 @@ class WebElement(
      */
     fun getAttribute(name: String): String? = find(locator).getAttribute(name)
 
+    /**
+     * Executes action on this. Visitor for DSL functions
+     *
+     * @param action will be executed on this element
+     * @return value returned by action
+     */
+    fun <T>with(action: WebElement.() -> T) = this.action()
+
+    /**
+     * org.openqa.selenium.Webelement contained in this
+     */
     internal val actualElement : org.openqa.selenium.WebElement
         get() = find(locator)
 }
@@ -183,5 +193,5 @@ class DriverLocator(private val driver: WebDriver) : ElementLocator() {
  * Locate Elements nested in other Element
  */
 class NestedLocator(private val element: WebElement) : ElementLocator() {
-    override fun invoke(loc: Locator): org.openqa.selenium.WebElement = element.actualElement.findElement(loc.by)!!
+    override fun invoke(loc: Locator)  = element.actualElement.findElement(loc.by)!!
 }
