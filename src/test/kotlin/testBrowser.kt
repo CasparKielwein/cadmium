@@ -34,4 +34,22 @@ internal class TestBrowser {
 
         assertEquals("Cheese", cheesePage.element(Id("firstHeading")).text)
     }
+
+    @Test
+    fun testWaiter() {
+        //constructs object representing running browser
+        val firefox = headlessFirefox()
+        //get Page object pointing to wikipedia and use it
+        firefox.browse(URL("https://en.wikipedia.org/wiki")) {
+            //get element searchInput and interact with it
+            element(Id("searchInput")) {
+                enter("cheese")
+                enter(Keys.ENTER)
+            }
+
+            waitUntil(pageLoad)
+            assertEquals("Cheese", element(Id("firstHeading")).text)
+        }
+    }
+
 }

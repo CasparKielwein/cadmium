@@ -18,7 +18,8 @@ import kotlin.time.seconds
  * @property baseURL property that is used to resolve all relative URL
  * @property b Browser instance driving this page
  */
-open class Page(private val baseURL: URL, private val b: Browser) : SearchContext {
+open class Page(private val baseURL: URL, private val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
+    SearchContext, Waiter by waiter {
 
     /**
      * Open browser on baseURL
@@ -139,6 +140,15 @@ open class Page(private val baseURL: URL, private val b: Browser) : SearchContex
      */
     val title: String?
         get() = b.driver.title
+
+    /**
+     * Waiter condition which returns true when a pageload was triggered
+     *
+     * Idea is taken from:
+     * <https://blog.codeship.com/get-selenium-to-wait-for-page-load/>
+     */
+    val pageLoad =
+        ExpectedConditions.stalenessOf(b.driver.findElement(By.tagName("html")))!!
 }
 
 /**

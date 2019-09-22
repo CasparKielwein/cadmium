@@ -1,6 +1,5 @@
 package cadmium
 
-import com.google.common.collect.Iterables.toArray
 import org.openqa.selenium.By
 import org.openqa.selenium.support.pagefactory.ByAll
 import org.openqa.selenium.support.pagefactory.ByChained
@@ -100,6 +99,9 @@ class Tag(v: String) : Locator() {
 class AllOf(vararg mechanisms: Locator) : Locator() {
     override val by = makeChained(mechanisms)
 
+    /**
+     * Helper Function to handle more complex initialization of field by
+     */
     private fun makeChained(mechanisms: Array<out Locator>): ByChained {
         val bys: Array<By> = mechanisms.map{ it.by }.toTypedArray()
         return ByChained(*bys)
@@ -112,6 +114,9 @@ class AllOf(vararg mechanisms: Locator) : Locator() {
 class AnyOf(vararg mechanisms: Locator) : Locator() {
     override val by = makeAll(mechanisms)
 
+    /**
+     * Helper Function to handle more complex initialization of field by
+     */
     private fun makeAll(mechanisms: Array<out Locator>): ByAll {
         val bys: Array<By> = mechanisms.map{ it.by }.toTypedArray()
         return ByAll(*bys)
