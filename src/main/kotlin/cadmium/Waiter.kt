@@ -1,5 +1,6 @@
 package cadmium
 
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedCondition
 import org.openqa.selenium.support.ui.WebDriverWait
 import kotlin.time.Duration
@@ -23,39 +24,53 @@ interface Waiter {
      * Wait until a given condition is fulfilled or timeOut is reached.
      */
     @UseExperimental(ExperimentalTime::class)
-    fun <T> waitUntil(timeOut: Duration = 10.seconds, condition: Waiter.() -> T) : T
+    fun <T> waitUntil(timeOut: Duration = 10.seconds, condition: Waiter.() -> T): T
 
     /**
      * Wait until a given condition is fulfilled
      */
-    fun <T, P : Waiter> waitUntil(condition: P.() -> T) : T
+    fun <T> waitUntil(condition: Waiter.() -> T): T
 
     /**
      * Overload of waitUntil for selenium.ExpectedCondition
      *
-     * @see org.openqa.selenium.ui.ExpectedCondition
+     * @see org.openqa.selenium.support.ui.ExpectedConditions
      */
     fun waitUntil(condition: ExpectedCondition<Boolean>)
 }
 
 /**
- * Default Implementation based on cadmium Browser class.
+ * Default Implementation based on cadmium Browser class and selenium wait api.
+ *
+ * Uses selenium Wait api under the hood.
+ * By default NoSuchElementExceptions are ignored to allow waiting for existence of WebElements.
+ * @see org.openqa.selenium.support.ui.Wait
  */
-class DefaultWaiterImpl(private val b: Browser) : Waiter {
+class DefaultWaiterImpl(b: Browser) : Waiter {
+    private val wait: WebDriverWait =
+        b.defaultWait.ignoring(org.openqa.selenium.NoSuchElementException::class.java) as WebDriverWait
+    private val driver: WebDriver = b.driver
 
     @UseExperimental(ExperimentalTime::class)
-    override fun <T> waitUntil(timeOut: Duration, condition: Waiter.() -> T) : T {
-        return WebDriverWait(b.driver, timeOut.inSeconds.toLong()).until { condition() }
-    }
+    override fun <T> waitUntil(timeOut: Duration, condition: Waiter.() -> T): T =
+        waitUntil(
+            WebDriverWait(driver, timeOut.inSeconds.toLong())
+                .ignoring(org.openqa.selenium.NoSuchElementException::class.java) as WebDriverWait,
+            condition
+        )
 
-    override fun <T, P : Waiter> waitUntil(condition: P.() -> T) : T {
-        return b.defaultWait.until {
-            @Suppress("UNCHECKED_CAST") //cast back to generic is safe
-            (this as P).condition()
-        }
-    }
+    override fun <T> waitUntil(condition: Waiter.() -> T): T =
+        waitUntil(wait, condition)
 
     override fun waitUntil(condition: ExpectedCondition<Boolean>) {
-        b.defaultWait.until(condition)
+        wait.until(condition)!!
+    }
+
+    /**
+     * uses seleniumWait to wait until a condition is true.
+     * ignores NoSuchElementException to wait for element to pop up.
+     */
+    private fun <T> waitUntil(seleniumWait: WebDriverWait, condition: Waiter.() -> T): T {
+        return seleniumWait.until { this.condition() }
     }
 }
