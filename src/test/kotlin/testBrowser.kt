@@ -22,7 +22,7 @@ internal class TestBrowser {
                 enter(Keys.ENTER)
             }
 
-            waitForPageLoad()
+            waitUntil(pageLoad)
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }
     }

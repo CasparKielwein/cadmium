@@ -1,14 +1,9 @@
 package cadmium
 
 import org.openqa.selenium.By
-import org.openqa.selenium.NoAlertPresentException
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.seconds
-
 /**
  * Represents a single page opened with Selenium WebDriver
  *
@@ -91,35 +86,11 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
     /**
      * Waits for an Alert dialog to appear
      *
-     * @param timeOut max wait Time for Alert to appear
-     * @throws org.openqa.selenium.NoAlertPresentException if no alert appears until timeOut
      * @return handle to present Alert
+     * @Todo convert this to a proper Waiter condition which still returns a cadmium.Alert
      */
-    @UseExperimental(ExperimentalTime::class)
-    fun waitForAlert(timeOut: Duration = 10.seconds): Alert {
-        for (i in 0..timeOut.inSeconds.toLong()) try {
-            return Alert(b.driver.switchTo().alert())
-        } catch (e: NoAlertPresentException) {
-            Thread.sleep(1000)
-        }
-
-        b.hooks.onFail(NoAlertPresentException())
-        throw NoAlertPresentException()
-    }
-
-    /**
-     * Waits for the complete page to load new
-     *
-     * Idea is taken from:
-     * https://blog.codeship.com/get-selenium-to-wait-for-page-load/
-     *
-     * @return this to allow chaining of method calls
-     */
-    @UseExperimental(ExperimentalTime::class)
-    fun waitForPageLoad(timeOut: Duration = 10.seconds): Page {
-        val oldPage = b.driver.findElement(By.tagName("html"))
-        WebDriverWait(b.driver, timeOut.inSeconds.toLong()).until(ExpectedConditions.stalenessOf(oldPage))
-        return this
+    fun waitForAlert(): Alert {
+        return Alert(waitUntil(ExpectedConditions.alertIsPresent()))
     }
 
     /**

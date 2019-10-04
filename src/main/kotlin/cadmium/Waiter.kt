@@ -36,7 +36,7 @@ interface Waiter {
      *
      * @see org.openqa.selenium.support.ui.ExpectedConditions
      */
-    fun waitUntil(condition: ExpectedCondition<Boolean>)
+    fun <T> waitUntil(condition: ExpectedCondition<T>): T
 }
 
 /**
@@ -62,9 +62,8 @@ class DefaultWaiterImpl(b: Browser) : Waiter {
     override fun <T> waitUntil(condition: Waiter.() -> T): T =
         waitUntil(wait, condition)
 
-    override fun waitUntil(condition: ExpectedCondition<Boolean>) {
+    override fun <T> waitUntil(condition: ExpectedCondition<T>) =
         wait.until(condition)!!
-    }
 
     /**
      * uses seleniumWait to wait until a condition is true.
