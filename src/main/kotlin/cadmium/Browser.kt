@@ -15,11 +15,11 @@ import kotlin.time.seconds
  * @property hooks hook functions executed on interactions with WebElements
  * @sample cadmium_test.TestBrowser.testMinimalExample
  */
-open class Browser(
-    val driver: WebDriver,
-    var defaultWait: WebDriverWait = WebDriverWait(driver, 10),
-    var hooks: InteractionHooks = InteractionHooks()
-) {
+@UseExperimental(ExperimentalTime::class)
+open class Browser(val driver: WebDriver, config: BrowserConfig) {
+    var defaultWait: WebDriverWait = WebDriverWait(driver, config.defaultTimeout.inSeconds.toLong())
+    var hooks: InteractionHooks = config.hooks
+
     /**
      * Opens a windows with the given URL
      *

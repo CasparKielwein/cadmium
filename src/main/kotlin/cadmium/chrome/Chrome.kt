@@ -8,7 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 /**
  * Represents the Chrome Webbrowser
  */
-class Chrome(driver: ChromeDriver) : Browser(driver)
+class Chrome(config: ChromeConfig) : Browser(ChromeDriver(config.options), config)
 
 /**
  * Configuration object for Chrome
@@ -35,7 +35,7 @@ fun chrome(configAction: ChromeConfig.() -> Unit = {}): Chrome {
     //apply user configurations
     config.configAction()
 
-    return Chrome(ChromeDriver(config.options))
+    return Chrome(config)
 }
 
 /**

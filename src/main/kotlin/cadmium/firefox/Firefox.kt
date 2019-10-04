@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxOptions
 /**
  * Represents Firefox Webbroser
  */
-class Firefox(driver: FirefoxDriver) : Browser(driver)
+class Firefox(config: FirefoxConfig) : Browser(FirefoxDriver(config.options), config)
 
 /**
  * Configuration object for Firefox
@@ -35,7 +35,7 @@ fun firefox(configAction: FirefoxConfig.() -> Unit = {}): Firefox {
     config.configAction()
 
     config.options.binary = config.binary
-    return Firefox(FirefoxDriver(config.options))
+    return Firefox(config)
 }
 
 /**
