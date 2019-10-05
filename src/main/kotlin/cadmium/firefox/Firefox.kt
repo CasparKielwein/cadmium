@@ -2,6 +2,7 @@ package cadmium.firefox
 
 import cadmium.Browser
 import cadmium.BrowserConfig
+import cadmium.VeryVerbose
 import org.openqa.selenium.firefox.FirefoxBinary
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
@@ -13,6 +14,9 @@ class Firefox(config: FirefoxConfig) : Browser(FirefoxDriver(config.options), co
 
 /**
  * Configuration object for Firefox
+ *
+ * @property options specific options of FirefoxDriver
+ * @property binary binary of Firefox corresponding configuration used for FirefoxDriver
  *
  * @see org.openqa.selenium.firefox.FirefoxBinary
  * @see org.openqa.selenium.firefox.FirefoxOptions

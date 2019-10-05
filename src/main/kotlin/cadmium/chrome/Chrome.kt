@@ -13,6 +13,7 @@ class Chrome(config: ChromeConfig) : Browser(ChromeDriver(config.options), confi
 /**
  * Configuration object for Chrome
  *
+ * @property options specific options of ChromeDriver
  * @see org.openqa.selenium.chrome.ChromeOptions
  */
 class ChromeConfig(

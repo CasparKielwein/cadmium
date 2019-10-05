@@ -10,14 +10,15 @@ Cadmium can be used to to simplify testing but unlike selenide is not a test fra
 Cadmium can be used independently of test and/or assert libraries.
 
 ## Why not Selenium directly?
-* Selenium-java is somewhat verbose as is often the case in java
+* Selenium-java is somewhat verbose as is often the case in java. Cadmium code is very concise.
 * Calling a java library directly in Kotlin causes issues with null safety.
 The wrappers provided by Cadmium make it explicit, when `null` is a possibility.
 * A nice and clean mini DSL
 
 ## Design Goals
 * Concise and Readable, Automation and test code using Cadmium should be as concise and readable as possible
-* Typesafe, use the typesystem to stop as many bugs as possible
+* Typesafe, use the typesystem to stop as many bugs as possible. 
+Cadmium interfaces use dedicated types instead of primitives.
 
 ## Cadmium DSL
 Cadmium provides a very small Domain Specific Language to make writing browser automation code very simple.
@@ -36,7 +37,7 @@ and immediately execute their own code on them without extra indirections.
                 enter(Keys.ENTER)
             }
 
-            waitForPageLoad()
+            waitUntil(pageLoad)
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }
 ```
@@ -48,6 +49,7 @@ Cadmium selenide has a beautiful red color.
 
 ## Dependencies
 * Selenium <https://www.seleniumhq.org/>
+* Kotlin experimental Time library for typesafe durations.
 * For tests of Cadmium itself:
     * Junit5
     * Firefox Geckodriver <https://github.com/mozilla/geckodriver/>
