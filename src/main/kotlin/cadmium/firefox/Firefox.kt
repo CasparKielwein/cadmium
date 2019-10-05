@@ -15,6 +15,9 @@ class Firefox(config: FirefoxConfig) : Browser(FirefoxDriver(config.options), co
 /**
  * Configuration object for Firefox
  *
+ * @property options specific options of FirefoxDriver
+ * @property binary binary of Firefox corresponding configuration used for FirefoxDriver
+ *
  * @see org.openqa.selenium.firefox.FirefoxBinary
  * @see org.openqa.selenium.firefox.FirefoxOptions
  */

@@ -24,14 +24,19 @@ open class BrowserEventListener : AbstractWebDriverEventListener() {
 }
 
 /**
- * Prints to a logging stream
+ * Prints every event to a logging stream.
+ *
+ * @property log logging function used on each event.
+ * replace this with custom logging functions to customize logging sinks.
+ * Default logs to System.err
  *
  * Prints before actions and on failure.
  * Assume that silence after "before*" means success.
  * Use VeryVerbose if you everything printed.
  */
-sealed class Verbose : BrowserEventListener() {
-    var log = { text : String -> System.err.println(text) }
+sealed class Verbose(
+    var log: (String) -> Unit = { text: String -> System.err.println(text) }
+) : BrowserEventListener() {
 
     override fun beforeClose() {
         log("closes current window.")
@@ -40,6 +45,7 @@ sealed class Verbose : BrowserEventListener() {
     override fun beforeAlertAccept(webDriver: WebDriver) {
         log("will accept alert.")
     }
+
     override fun beforeAlertDismiss(driver: WebDriver) {
         log("will dismiss alert.")
     }
@@ -165,6 +171,7 @@ class SlowDown(private val waitTime: Duration = 250.milliseconds) : BrowserEvent
     override fun beforeAlertAccept(webDriver: WebDriver) {
         Thread.sleep(waitTime.toLongMilliseconds())
     }
+
     override fun beforeAlertDismiss(driver: WebDriver) {
         Thread.sleep(waitTime.toLongMilliseconds())
     }

@@ -105,7 +105,7 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
 
     /**
      * The title of the current page, with leading and trailing whitespace stripped, or null
-     * if one is not already set
+     * if no title is set yet.
      */
     val title: String?
         get() = b.driver.title
