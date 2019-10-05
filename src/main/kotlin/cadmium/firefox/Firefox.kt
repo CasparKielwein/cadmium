@@ -2,6 +2,7 @@ package cadmium.firefox
 
 import cadmium.Browser
 import cadmium.BrowserConfig
+import cadmium.VeryVerbose
 import org.openqa.selenium.firefox.FirefoxBinary
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions

@@ -20,13 +20,11 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * @property find ElementLocator used to search for the element when interacting with it
  * @property wait default Wait, Methods use when trying to interact with WebElements
  * @property locator Selenium Locator used to retrieve Element
- * @property hooks hook functions executed on interactions Element
  */
 class WebElement(
     private val find: ElementLocator,
     private var wait: WebDriverWait,
-    private val locator: Locator,
-    private val hooks: InteractionHooks
+    private val locator: Locator
 ) : SearchContext {
 
     /**
@@ -38,7 +36,7 @@ class WebElement(
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(NestedLocator(this), wait, loc, hooks)
+        val e = WebElement(NestedLocator(this), wait, loc)
         e.actions()
         return e    }
 
@@ -53,7 +51,7 @@ class WebElement(
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
         return find(locator)
             .findElements(loc.by)
-            .map { WebElement(NestedLocator(this), waiter, loc, hooks) }
+            .map { WebElement(NestedLocator(this), waiter, loc) }
     }
 
     /**
@@ -70,7 +68,6 @@ class WebElement(
      * greater then 0.
      */
     fun click(): WebElement {
-        hooks.onClick(locator)
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
         find(locator).click()
         return this
@@ -83,7 +80,6 @@ class WebElement(
      * @return this to allow chaining of operations
      */
     fun enter(text: CharSequence): WebElement {
-        hooks.onEnter(locator, text)
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
         find(locator).sendKeys(text)
         return this

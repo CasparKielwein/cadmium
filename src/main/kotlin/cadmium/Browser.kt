@@ -1,6 +1,7 @@
 package cadmium
 
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.support.events.EventFiringWebDriver
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
 import kotlin.time.Duration
@@ -16,9 +17,24 @@ import kotlin.time.seconds
  * @sample cadmium_test.TestBrowser.testMinimalExample
  */
 @UseExperimental(ExperimentalTime::class)
-open class Browser(val driver: WebDriver, config: BrowserConfig) {
-    var defaultWait: WebDriverWait = WebDriverWait(driver, config.defaultTimeout.inSeconds.toLong())
-    var hooks: InteractionHooks = config.hooks
+open class Browser(
+    driver: WebDriver,
+    config: BrowserConfig
+) {
+
+    val driver: WebDriver
+    var defaultWait: WebDriverWait
+    var hooks: BrowserEventListener
+
+    init {
+        val d = EventFiringWebDriver(driver)
+        d.register(config.hooks)
+        this.driver = d
+
+        defaultWait = WebDriverWait(driver, config.defaultTimeout.inSeconds.toLong())
+        //store hooks for events not provided by WebDriverEventListener
+        hooks = config.hooks
+    }
 
     /**
      * Opens a windows with the given URL
@@ -46,5 +62,5 @@ open class Browser(val driver: WebDriver, config: BrowserConfig) {
 @UseExperimental(ExperimentalTime::class)
 open class BrowserConfig(
     var defaultTimeout: Duration = 10.seconds,
-    var hooks: InteractionHooks = InteractionHooks()
+    var hooks: BrowserEventListener = noHooks()
 )

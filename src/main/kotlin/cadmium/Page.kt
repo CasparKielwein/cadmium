@@ -21,7 +21,6 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      */
     init {
         b.driver.get(baseURL.toString())
-        b.hooks.afterOpen(baseURL)
     }
 
     /**
@@ -33,7 +32,6 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      */
     fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Page {
         b.driver.get("$baseURL/$relativeUrl")
-        b.hooks.afterOpen(URL("$baseURL/$relativeUrl"))
         actions()
         return this
     }
@@ -47,7 +45,7 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(DriverLocator(b.driver), b.defaultWait, loc, b.hooks)
+        val e = WebElement(DriverLocator(b.driver), b.defaultWait, loc)
         e.actions()
         return e
     }
@@ -65,7 +63,7 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      * Todo: return a lazily evaluated range of WebElements instead
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(DriverLocator(b.driver), waiter, loc, b.hooks) }
+        return b.driver.findElements(loc.by).map { WebElement(DriverLocator(b.driver), waiter, loc) }
     }
 
     /**
