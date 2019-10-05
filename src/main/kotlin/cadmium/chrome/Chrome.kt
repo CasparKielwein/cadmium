@@ -2,6 +2,7 @@ package cadmium.chrome
 
 import cadmium.Browser
 import cadmium.BrowserConfig
+import java.io.File
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 
@@ -31,12 +32,22 @@ class ChromeConfig(
 fun chrome(configAction: ChromeConfig.() -> Unit = {}): Chrome {
     val config = ChromeConfig(ChromeOptions())
     //set default parameter
-    config.options.setBinary("/usr/bin/chromium-browser") //this only works on linux atm
+    val chromiumPath = findChromiumExecutable()  // this only works on linux atm
+    config.options.setBinary(chromiumPath)
 
     //apply user configurations
     config.configAction()
 
     return Chrome(config)
+}
+
+fun findChromiumExecutable(): String {
+    val paths = arrayOf("/usr/bin/chromium-browser", "/usr/bin/chromium")
+    val hit: String? = paths.find({ path -> File(path).exists()})
+    if (hit == null) {
+        throw Exception("Cannot find a Chromium binary at ${paths.joinToString(", ")}")
+    }
+    return hit
 }
 
 /**
