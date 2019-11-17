@@ -14,8 +14,8 @@ import org.openqa.selenium.support.pagefactory.ByChained
  *
  * @see org.openqa.selenium.By
  */
-abstract class Locator {
-    abstract val by: By
+interface Locator {
+    val by: By
 }
 
 // We assert non-null here as the java selenium by functions never return null
@@ -23,14 +23,14 @@ abstract class Locator {
 /**
  * @param v The value of the "name" attribute to search for.
  */
-class Name(v: String) : Locator() {
+class Name(v: String) : Locator {
     override val by = By.name(v)!!
 }
 
 /**
  * @param v The value of the "id" attribute to search for.
  */
-class Id(v: String) : Locator() {
+class Id(v: String) : Locator {
     override val by = By.id(v)!!
 }
 
@@ -39,14 +39,14 @@ class Id(v: String) : Locator() {
  *
  * @param text the text contained in label to search for.
  */
-class Label(text: String) : Locator() {
+class Label(text: String) : Locator {
     override val by = By.xpath("//input[@id=string(//label[contains(text(),\"$text\")]/@for)]")!!
 }
 
 /**
  *  @param expression The XPath to use.
  */
-class XPath(expression: String) : Locator() {
+class XPath(expression: String) : Locator {
     override val by = By.xpath(expression)!!
 }
 
@@ -59,7 +59,7 @@ class XPath(expression: String) : Locator() {
  *
  * @param name The value of the "class" attribute to search for.
  */
-class ClassName(name: String) : Locator() {
+class ClassName(name: String) : Locator {
     override val by = By.className(name)!!
 }
 
@@ -68,35 +68,35 @@ class ClassName(name: String) : Locator() {
  *
  * @param selector CSS expression.
  */
-class Css(selector: String) : Locator() {
+class Css(selector: String) : Locator {
     override val by = By.cssSelector(selector)!!
 }
 
 /**
  * @param text The exact text of Link to match against.
  */
-class Link(text: String) : Locator() {
+class Link(text: String) : Locator {
     override val by = By.linkText(text)!!
 }
 
 /**
  * @param text The partial text of Link to match against
  */
-class PartialLink(text: String) : Locator() {
+class PartialLink(text: String) : Locator {
     override val by = By.partialLinkText(text)!!
 }
 
 /**
  * @param v The element's tag name.
  */
-class Tag(v: String) : Locator() {
+class Tag(v: String) : Locator {
     override val by = By.tagName(v)!!
 }
 
 /**
  * Mechanism to search for elements which fulfill all given requirements
  */
-class AllOf(vararg mechanisms: Locator) : Locator() {
+class AllOf(vararg mechanisms: Locator) : Locator {
     override val by = makeChained(mechanisms)
 
     /**
@@ -111,7 +111,7 @@ class AllOf(vararg mechanisms: Locator) : Locator() {
 /**
  * Mechanism to search for elements which fulfill any single one of the given requirements
  */
-class AnyOf(vararg mechanisms: Locator) : Locator() {
+class AnyOf(vararg mechanisms: Locator) : Locator {
     override val by = makeAll(mechanisms)
 
     /**
