@@ -79,9 +79,9 @@ class WebElement(
      * @param[text] character sequence to send to the element
      * @return this to allow chaining of operations
      */
-    fun enter(text: CharSequence): WebElement {
+    fun enter(vararg text: CharSequence): WebElement {
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
-        find(locator).sendKeys(text)
+        find(locator).sendKeys(*text)
         return this
     }
 

@@ -54,10 +54,7 @@ internal class TestBrowser {
 
             open("Main_Page")
 
-            element(Id("searchInput")) {
-                enter("Bacon")
-                enter(Keys.ENTER)
-            }
+            element(Id("searchInput")).enter("Bacon", Keys.ENTER)
 
             //wait until header changed to "Bacon" using waitUntil dsl
             waitUntil{ element(Id("firstHeading")).with { text == "Bacon" }}
