@@ -1,5 +1,6 @@
 package cadmium
 
+import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.Select
 
 /**
@@ -24,9 +25,9 @@ class SelectOptions(private val element: WebElement) {
      * If more than one element match the given locator, all are selected.
      */
     fun select(loc: SelectLocator) = when (loc) {
-        is ByValue -> option.selectByValue(loc.value)
-        is ByText -> option.selectByVisibleText(loc.text)
-        is ByIndex -> option.selectByIndex(loc.index)
+        is Value -> option.selectByValue(loc.value)
+        is Text -> option.selectByVisibleText(loc.text)
+        is Index -> option.selectByIndex(loc.index)
     }
 
     /**
@@ -38,9 +39,9 @@ class SelectOptions(private val element: WebElement) {
      * If more than one element match the given locator, all are deselected.
      */
     fun deselect(loc: SelectLocator) = when (loc) {
-        is ByValue -> option.deselectByValue(loc.value)
-        is ByText -> option.deselectByVisibleText(loc.text)
-        is ByIndex -> option.deselectByIndex(loc.index)
+        is Value -> option.deselectByValue(loc.value)
+        is Text -> option.deselectByVisibleText(loc.text)
+        is Index -> option.deselectByIndex(loc.index)
     }
 
     /***
@@ -74,20 +75,26 @@ class SelectOptions(private val element: WebElement) {
 sealed class SelectLocator
 
 /**
- * Select all elements which match given values
+ * Select all option elements which match given values
  */
-class ByValue(val value: String) : SelectLocator()
+class Value(val value: String) : SelectLocator(), Locator {
+    override val by: By
+        get() = By.xpath("//option[@value=\"$value\"]")
+}
 
 /**
- * Select all elements which have given text as visible text.
+ * Select all option elements which have given text as visible text.
  */
-class ByText(val text: String) : SelectLocator()
+class Text(val text: String) : SelectLocator(), Locator {
+    override val by: By
+        get() = By.xpath("//option[contains(text(),\"$text\")]")
+}
 
 /**
  * Select the option at the given index. This is done by examining the "index" attribute of an
  * element, and not merely by counting.
  */
-class ByIndex(val index: Int) : SelectLocator()
+class Index(val index: Int) : SelectLocator()
 
 /**
  * Get an Option Group, a WebElement which is a SELECT tag
