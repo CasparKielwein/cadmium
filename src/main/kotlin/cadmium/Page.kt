@@ -77,7 +77,7 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
     fun click(loc: Locator) = element(loc).click()
 
     /**
-     * Shorthand for clicking on input element with given test as value
+     * Shorthand for clicking on input element with given text as value
      */
     fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
 

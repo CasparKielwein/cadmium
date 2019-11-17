@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.Select
  * Unlike WebElement, SelectOptions are evaluated eagerly, as it only serves as a base for the byX methods.
  * Eager evaluation fails faster in case of errors.
  *
+ * @property element WebElement representing the full select.
  * @see org.openqa.selenium.support.ui.Select
  */
 class SelectOptions(private val element: WebElement) {
@@ -93,15 +94,21 @@ class Text(val text: String) : SelectLocator(), Locator {
 /**
  * Select the option at the given index. This is done by examining the "index" attribute of an
  * element, and not merely by counting.
+ *
+ * @property index index of element so select, must be zero or larger.
  */
-class Index(val index: Int) : SelectLocator()
+class Index(val index: Int) : SelectLocator() {
+    init {
+        require(index >= 0)
+    }
+}
 
 /**
  * Get an Option Group, a WebElement which is a SELECT tag
  *
  * @param loc Locator used to identify the Element
  * @param actions optional actions executed on option element
- * @return WebElement wrapping the SELECT found by given Locator
+ * @return SelectOptions wrapping the SELECT found by given Locator
  * @throws org.openqa.selenium.support.ui.UnexpectedTagNameException when element is not a SELECT
  *
  * If multiple elements match the locator, the first is returned.
