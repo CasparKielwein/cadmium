@@ -1,5 +1,6 @@
 package cadmium
 
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -38,7 +39,8 @@ class WebElement(
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
         val e = WebElement(NestedLocator(this), wait, loc)
         e.actions()
-        return e    }
+        return e
+    }
 
     /**
      * Find all elements within the current element using the given mechanism.
@@ -57,7 +59,7 @@ class WebElement(
     /**
      * overload of elements without dedicated wait parameter
      */
-    override fun elements(loc: Locator): List<WebElement>  = elements(loc, wait)
+    override fun elements(loc: Locator): List<WebElement> = elements(loc, wait)
 
     /**
      * Click this element, wait default timeout for it to become visible
@@ -76,11 +78,19 @@ class WebElement(
     /**
      * Enter text or key-presses to this element, wait default timeout for it to become visible
      *
-     * @param[text] character sequence to send to the element
+     * @param text character sequence to send to the element
+     * @param replace if true, [text] will replace the current content of WebElement.
+     * Use replace instead of a separate clear call, if the additional onChange event triggered by clear causes problems.
      * @return this to allow chaining of operations
      */
-    fun enter(vararg text: CharSequence): WebElement {
+    fun enter(vararg text: CharSequence, replace: Boolean = false): WebElement {
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
+        if (replace) {
+            //select all current text by pressing control/command + a and delete it
+            val os = System.getProperty("os.name")
+            val modifierKey = if (os == null || os.contains("mac", ignoreCase = true)) Keys.META else Keys.CONTROL
+            find(locator).sendKeys(Keys.chord(modifierKey, "a"),Keys.DELETE)
+        }
         find(locator).sendKeys(*text)
         return this
     }
@@ -88,7 +98,7 @@ class WebElement(
     /**
      * If this element is a text entry element, this will clear the value.
      *
-     * @return this to allow chaining of operations
+     * @return this, to allow chaining of operation.
      */
     fun clear(): WebElement {
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
@@ -162,12 +172,12 @@ class WebElement(
      * @param action will be executed on this element
      * @return value returned by action
      */
-    fun <T>with(action: WebElement.() -> T) = this.action()
+    fun <T> with(action: WebElement.() -> T) = this.action()
 
     /**
      * org.openqa.selenium.Webelement contained in this
      */
-    internal val actualElement : org.openqa.selenium.WebElement
+    internal val actualElement: org.openqa.selenium.WebElement
         get() = find(locator)
 }
 
@@ -189,5 +199,5 @@ class DriverLocator(private val driver: WebDriver) : ElementLocator() {
  * Locate Elements nested in other Element
  */
 class NestedLocator(private val element: WebElement) : ElementLocator() {
-    override fun invoke(loc: Locator)  = element.actualElement.findElement(loc.by)!!
+    override fun invoke(loc: Locator) = element.actualElement.findElement(loc.by)!!
 }
