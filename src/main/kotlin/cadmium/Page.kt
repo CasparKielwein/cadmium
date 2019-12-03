@@ -103,7 +103,7 @@ open class Page(private var baseURL: URL, internal val b: Browser, private val w
      * @see org.openqa.selenium.WebDriver.getPageSource
      */
     val source: String
-        get() = b.driver.pageSource
+        get() = b.driver.pageSource!!
 
     /**
      * The title of the current page, with leading and trailing whitespace stripped, or null
@@ -125,7 +125,7 @@ open class Page(private var baseURL: URL, internal val b: Browser, private val w
      * Current url of this page.
      */
     val currentUrl
-        get() = b.driver.currentUrl
+        get() = b.driver.currentUrl!!
 }
 
 /**

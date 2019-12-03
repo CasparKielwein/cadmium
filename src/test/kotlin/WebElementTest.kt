@@ -1,12 +1,9 @@
 package cadmium_test
 
-
 import cadmium.*
 import cadmium.firefox.headlessFirefox
-import org.openqa.selenium.Keys
 import java.net.URL
 import kotlin.test.Test
-import kotlin.test.assert
 import kotlin.test.assertEquals
 
 internal class TestWebElement {

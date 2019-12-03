@@ -4,6 +4,7 @@ import cadmium.util.modifierKey
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.Keys
 import org.openqa.selenium.Point
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -58,34 +59,40 @@ class Window<T : Page>(val page: T) : SearchContext by page {
 /**
  * Opens a link with in window specified by target attribute of the link.
  *
+ * @param link Locator which specifies the target
  * @return window with page corresponding to [link].
  * Might be the current window.
  *
  * Might open a new window depending on target attribute of link.
  * In this case the new window will have to be closed manually after use.
  */
-fun SearchContext.open(link: Link) {
+fun Page.open(link: Locator): Window<Page> {
     element(link).click()
+    return Window(this)
 }
 
 /**
  * Opens a link in a new window and closes the window after use.
  *
+ * @param link Locator which specifies the target
+ * @param timeout wait for this long for new window to open.
+ * @param action Execute on page in new window
  */
 @UseExperimental(ExperimentalTime::class)
-fun Page.openInTempWindow(link: Link, action: Page.() -> Unit) {
+fun Page.openInTempWindow(link: Locator, timeout: Duration = 10.seconds, action: Page.() -> Unit) {
     element(link).enter(Keys.chord(modifierKey(), Keys.RETURN))
     val oldHandle = driver.windowHandle
     // we depend on the fact that the implementation of getWindowHandles() constructs a LinkedHashSet,
     // which guarantees order of iteration is equal to order of insertion.
-    waitUntil(10.seconds) { driver.windowHandles.last() != oldHandle }
+    waitUntil(timeout) { driver.windowHandles.last() != oldHandle }
     val latestHandle = driver.windowHandles.last()
 
     assert(oldHandle != latestHandle)
     driver.switchTo().window(latestHandle)
 
     action()
-   // driver.close()
+
+    driver.close()
     assert(driver.windowHandles.isNotEmpty())
     driver.switchTo().window(oldHandle)
 }

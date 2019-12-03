@@ -70,7 +70,7 @@ class SelectOptions(private val element: WebElement) {
      * List of all available options in this element
      */
     private val options
-        get() = element.elements(Tag("option"));
+        get() = element.elements(Tag("option"))
 }
 
 sealed class SelectLocator

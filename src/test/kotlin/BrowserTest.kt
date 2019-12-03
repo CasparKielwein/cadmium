@@ -1,7 +1,6 @@
 package cadmium_test
 
 import cadmium.*
-import cadmium.firefox.firefox
 import cadmium.firefox.headlessFirefox
 import org.openqa.selenium.Keys
 import kotlin.test.Test
