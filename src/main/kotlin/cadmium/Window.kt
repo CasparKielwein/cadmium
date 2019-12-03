@@ -1,6 +1,9 @@
 package cadmium
 
+import cadmium.util.modifierKey
+import org.openqa.selenium.Dimension
 import org.openqa.selenium.Keys
+import org.openqa.selenium.Point
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -22,6 +25,34 @@ class Window<T : Page>(val page: T) : SearchContext by page {
 
         d.close()
     }
+
+    /**
+     * Size of the current window.
+     *
+     * Changing it will change the outer window dimension,
+     * not just the view port, synonymous to window.resizeTo() in JS.
+     */
+    var size : Dimension
+        get() = d.manage().window().size!!
+        set(value) { d.manage().window().size = value }
+
+    /**
+     * Position of the current window. This is relative to the upper left corner of the
+     * screen, synonymous
+     */
+    var position  : Point
+        get() = d.manage().window().position!!
+        set(value) { d.manage().window().position = value}
+
+    /**
+     * Maximizes the current window if it is not already maximized
+     */
+    fun maximize() = d.manage().window().maximize()
+
+    /**
+     * Fullscreen the current window if it is not already fullscreen
+     */
+    fun fullscreen() = d.manage().window().fullscreen()
 }
 
 /**
@@ -43,12 +74,11 @@ fun SearchContext.open(link: Link) {
  */
 @UseExperimental(ExperimentalTime::class)
 fun Page.openInTempWindow(link: Link, action: Page.() -> Unit) {
-    element(link).enter(Keys.chord(Keys.CONTROL, Keys.RETURN))
+    element(link).enter(Keys.chord(modifierKey(), Keys.RETURN))
     val oldHandle = driver.windowHandle
     // we depend on the fact that the implementation of getWindowHandles() constructs a LinkedHashSet,
     // which guarantees order of iteration is equal to order of insertion.
     waitUntil(10.seconds) { driver.windowHandles.last() != oldHandle }
-
     val latestHandle = driver.windowHandles.last()
 
     assert(oldHandle != latestHandle)

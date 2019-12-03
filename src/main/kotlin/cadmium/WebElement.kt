@@ -1,5 +1,6 @@
 package cadmium
 
+import cadmium.util.modifierKey
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -87,9 +88,7 @@ class WebElement(
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
         if (replace) {
             //select all current text by pressing control/command + a and delete it
-            val os = System.getProperty("os.name")
-            val modifierKey = if (os == null || os.contains("mac", ignoreCase = true)) Keys.META else Keys.CONTROL
-            find(locator).sendKeys(Keys.chord(modifierKey, "a"),Keys.DELETE)
+            find(locator).sendKeys(Keys.chord(modifierKey(), "a"),Keys.DELETE)
         }
         find(locator).sendKeys(*text)
         return this
