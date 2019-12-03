@@ -29,7 +29,7 @@ internal class TestBrowser {
 
     @Test
     fun testRelativeURL() {
-        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki"))
+        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki")).page
 
         val cheesePage = mainPage.open("cheese")
 
