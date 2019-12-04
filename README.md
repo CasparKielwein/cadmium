@@ -19,6 +19,7 @@ The wrappers provided by Cadmium make it explicit, when `null` is a possibility.
 * Concise and Readable, Automation and test code using Cadmium should be as concise and readable as possible
 * Typesafe, use the typesystem to stop as many bugs as possible. 
 Cadmium interfaces use dedicated types instead of primitives.
+* Intuitive and Accessible, cadmium is easy to get into and does not require expert knowledge of html, kotlin or selenim.
 
 ## Cadmium DSL
 Cadmium provides a very small Domain Specific Language to make writing browser automation code very simple.
