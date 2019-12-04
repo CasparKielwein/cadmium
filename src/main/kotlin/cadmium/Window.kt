@@ -4,6 +4,7 @@ import cadmium.util.modifierKey
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.Keys
 import org.openqa.selenium.Point
+import java.net.URL
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
@@ -90,7 +91,7 @@ fun Page.openInTempWindow(link: Locator, timeout: Duration = 10.seconds, action:
     assert(oldHandle != latestHandle)
     driver.switchTo().window(latestHandle)
 
-    action()
+    Page(URL(currentUrl), b).action()
 
     driver.close()
     assert(driver.windowHandles.isNotEmpty())
