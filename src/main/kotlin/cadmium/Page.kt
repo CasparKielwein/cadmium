@@ -1,9 +1,11 @@
 package cadmium
 
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.net.URL
+
 /**
  * Represents a single page opened with Selenium WebDriver
  *
@@ -13,14 +15,14 @@ import java.net.URL
  * @property baseURL property that is used to resolve all relative URL
  * @property b Browser instance driving this page
  */
-open class Page(private val baseURL: URL, private val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
+open class Page(private var baseURL: URL, internal val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
     SearchContext, Waiter by waiter {
 
-    /**
-     * Open browser on baseURL
-     */
-    init {
+    fun open(url: URL, actions: Page.() -> Unit = {}): Window<Page> {
+        baseURL = url
         b.driver.get(baseURL.toString())
+        actions()
+        return Window(this)
     }
 
     /**
@@ -30,10 +32,10 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      * @param actions executed on Page after opening URL
      * @sample cadmium_test.TestBrowser.testRelativeURL
      */
-    fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Page {
+    fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Window<Page> {
         b.driver.get("$baseURL/$relativeUrl")
         actions()
-        return this
+        return Window(this)
     }
 
     /**
@@ -101,7 +103,7 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      * @see org.openqa.selenium.WebDriver.getPageSource
      */
     val source: String
-        get() = b.driver.pageSource
+        get() = b.driver.pageSource!!
 
     /**
      * The title of the current page, with leading and trailing whitespace stripped, or null
@@ -118,6 +120,12 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
      */
     val pageLoad =
         ExpectedConditions.stalenessOf(b.driver.findElement(By.tagName("html")))!!
+
+    /**
+     * Current url of this page.
+     */
+    val currentUrl
+        get() = b.driver.currentUrl!!
 }
 
 /**
@@ -130,3 +138,9 @@ open class Page(private val baseURL: URL, private val b: Browser, private val wa
 fun <T : Page> T.visit(actions: T.() -> Unit) {
     actions()
 }
+
+/**
+ * Provide access to WebDriver used in Page
+ */
+internal val Page.driver: WebDriver
+    get() = b.driver

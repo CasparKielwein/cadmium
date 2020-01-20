@@ -1,7 +1,6 @@
 package cadmium_test
 
 import cadmium.*
-import cadmium.firefox.firefox
 import cadmium.firefox.headlessFirefox
 import org.openqa.selenium.Keys
 import kotlin.test.Test
@@ -29,7 +28,7 @@ internal class TestBrowser {
 
     @Test
     fun testRelativeURL() {
-        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki"))
+        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki")).page
 
         val cheesePage = mainPage.open("cheese")
 

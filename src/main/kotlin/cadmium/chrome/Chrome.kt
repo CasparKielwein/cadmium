@@ -43,11 +43,8 @@ fun chrome(configAction: ChromeConfig.() -> Unit = {}): Chrome {
 
 fun findChromiumExecutable(): String {
     val paths = arrayOf("/usr/bin/chromium-browser", "/usr/bin/chromium")
-    val hit: String? = paths.find({ path -> File(path).exists()})
-    if (hit == null) {
-        throw Exception("Cannot find a Chromium binary at ${paths.joinToString(", ")}")
-    }
-    return hit
+    return paths.find { path -> File(path).exists()}
+        ?: throw Exception("Cannot find a Chromium binary at ${paths.joinToString(", ")}")
 }
 
 /**

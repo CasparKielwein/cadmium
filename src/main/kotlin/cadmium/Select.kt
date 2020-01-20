@@ -69,8 +69,8 @@ class SelectOptions(private val element: WebElement) {
     /**
      * List of all available options in this element
      */
-    private val options
-        get() = element.elements(Tag("option"));
+    val allOptions
+        get() = element.elements(Tag("option"))
 }
 
 sealed class SelectLocator
@@ -110,8 +110,9 @@ class Index(val index: Int) : SelectLocator() {
  * @param actions optional actions executed on option element
  * @return SelectOptions wrapping the SELECT found by given Locator
  * @throws org.openqa.selenium.support.ui.UnexpectedTagNameException when element is not a SELECT
+ * @sample cadmium_test.TestSelect.testSelectByValue
  *
  * If multiple elements match the locator, the first is returned.
  */
-fun SearchContext.withOption(loc: Locator, actions: SelectOptions.() -> Unit = {}) =
+fun SearchContext.option(loc: Locator, actions: SelectOptions.() -> Unit = {}) =
     SelectOptions(element(loc)).apply(actions)
