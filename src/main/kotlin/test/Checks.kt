@@ -6,11 +6,11 @@ import cadmium.WebElement
 
 /**
  * Check functions to assist testing with cadmium
- * these are written to make use with testing frameworks like Junit
- * and assert libraries like assertk as simple as possible
+ * These are written to make use with testing frameworks like Junit
+ * and assert libraries like assertk as simple as possible.
  *
  * These utils do not carry dependencies on frameworks themselves.
- * If asserts are used themselves, they are the general Kotlin assert
+ * If asserts are used themselves, they are the general Kotlin assert.
  */
 
 /**

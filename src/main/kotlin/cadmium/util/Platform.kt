@@ -7,7 +7,8 @@ import org.openqa.selenium.Keys
  */
 
 /**
- * Returns the appropriate modifier key depending on used OS
+ * Returns the appropriate modifier key depending on used OS.
+ *
  * Linux, Windows -> CONTROL
  * MAC -> COMMAND
  */

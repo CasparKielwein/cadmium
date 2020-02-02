@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/CasparKielwein/cadmium.svg?branch=master)](https://travis-ci.org/CasparKielwein/cadmium)
 
 Cadmium is a browser automation library based on Selenium.
-It leverages the power of the Kotlin language to use of Selenium simple and concise
+It leverages the power of the Kotlin language to make the use of Selenium simple and concise
 
 Cadmium can be used to to simplify testing but unlike selenide is not a test framework itself.
 Cadmium can be used independently of test and/or assert libraries.
@@ -19,7 +19,7 @@ The wrappers provided by Cadmium make it explicit, when `null` is a possibility.
 * Concise and Readable, Automation and test code using Cadmium should be as concise and readable as possible
 * Typesafe, use the typesystem to stop as many bugs as possible. 
 Cadmium interfaces use dedicated types instead of primitives.
-* Intuitive and Accessible, cadmium is easy to get into and does not require expert knowledge of html, kotlin or selenim.
+* Intuitive and Accessible, cadmium is easy to get into and does not require expert knowledge of html, kotlin or selenium.
 
 ## Cadmium DSL
 Cadmium provides a very small Domain Specific Language to make writing browser automation code very simple.

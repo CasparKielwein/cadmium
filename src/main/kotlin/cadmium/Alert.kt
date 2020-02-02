@@ -1,7 +1,7 @@
 package cadmium
 
 /**
- * Represents an Alert triggered by a page
+ * Represents an Alert triggered by a page.
  */
 class Alert(private val alert: org.openqa.selenium.Alert) {
     /**

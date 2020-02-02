@@ -38,7 +38,7 @@ open class Browser(
     }
 
     /**
-     * Opens a windows with the given URL
+     * Opens a windows with the given URL.
      *
      * @param url URL of new page
      * @return Page opened at the given URl
@@ -50,7 +50,7 @@ open class Browser(
     }
 
     /**
-     * Opens a window at given URL and executes given actions on Page
+     * Opens a window at given URL and executes given actions on Page.
      *
      * @param url URL of new page
      * @param actions Extension function Page executed after opening it.
@@ -73,3 +73,4 @@ open class BrowserConfig(
     var defaultTimeout: Duration = 10.seconds,
     var hooks: BrowserEventListener = noHooks()
 )
+
