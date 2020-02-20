@@ -144,3 +144,14 @@ fun <T : Page> T.visit(actions: T.() -> Unit) {
  */
 internal val Page.driver: WebDriver
     get() = b.driver
+
+/**
+ * Returns unwrapped selenium.WebDriver.
+ *
+ * Note:
+ * This function is intended for use, when cadmium lacks a feature
+ * and access to the selenium WebDriver is required.
+ * Anything done with the raw webdriver might be broken
+ * by cadmium code later.
+ */
+fun Page.rawWebDriver() = driver
