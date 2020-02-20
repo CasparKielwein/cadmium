@@ -14,7 +14,7 @@ internal class TestWindow {
     @Test
     fun testTemporaryWindow() = headlessFirefox().browse(URL("http://the-internet.herokuapp.com/")) {
         assertEquals("http://the-internet.herokuapp.com/", currentUrl)
-        openInTempWindow(Link("A/B Testing")) {
+        inTempWindow(Link("A/B Testing")) {
             assertEquals("http://the-internet.herokuapp.com/abtest", currentUrl)
         }
         assertEquals("http://the-internet.herokuapp.com/", currentUrl)

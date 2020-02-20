@@ -80,7 +80,7 @@ fun Page.open(link: Locator): Window<Page> {
  * @param action Execute on page in new window
  */
 @UseExperimental(ExperimentalTime::class)
-fun Page.openInTempWindow(link: Locator, timeout: Duration = 10.seconds, action: Page.() -> Unit) {
+fun Page.inTempWindow(link: Locator, timeout: Duration = 10.seconds, action: Page.() -> Unit) {
     element(link).enter(Keys.chord(modifierKey(), Keys.RETURN))
     val oldHandle = driver.windowHandle
     // we depend on the fact that the implementation of getWindowHandles() constructs a LinkedHashSet,
