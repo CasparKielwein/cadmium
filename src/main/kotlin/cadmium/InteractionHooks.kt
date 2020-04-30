@@ -33,8 +33,10 @@ open class BrowserEventListener : AbstractWebDriverEventListener() {
  * Prints before actions and on failure.
  * Assume that silence after "before*" means success.
  * Use VeryVerbose if you everything printed.
+ *
+ * @sample cadmium_test.TestInteractionHooks.testVerbosityPrinting
  */
-sealed class Verbose(
+open class Verbose(
     var log: (String) -> Unit = { text: String -> System.err.println(text) }
 ) : BrowserEventListener() {
 
