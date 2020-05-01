@@ -79,8 +79,11 @@ open class Verbose(
         log("will click on $element")
     }
 
-    override fun beforeChangeValueOf(element: SeleniumWebElement, driver: WebDriver, keysToSend: Array<CharSequence>) {
-        log("will send: $keysToSend to $element")
+    override fun beforeChangeValueOf(element: SeleniumWebElement, driver: WebDriver, keysToSend: Array<CharSequence>?) {
+        if (keysToSend == null)
+            log("will send: clear element: $element")
+        else
+            log("will send: $keysToSend to element: $element")
     }
 
     override fun beforeScript(script: String, driver: WebDriver) {
@@ -140,8 +143,11 @@ class VeryVerbose : Verbose() {
         log("has clicked on element $element.")
     }
 
-    override fun afterChangeValueOf(element: SeleniumWebElement, driver: WebDriver, keysToSend: Array<CharSequence>) {
-        log("has entered: $keysToSend to element $element.")
+    override fun afterChangeValueOf(element: SeleniumWebElement, driver: WebDriver, keysToSend: Array<CharSequence>?) {
+        if (keysToSend == null)
+            log("has cleared element $element.")
+        else
+            log("has entered: $keysToSend to element $element.")
     }
 
     override fun afterScript(script: String, driver: WebDriver) {
@@ -161,7 +167,7 @@ class VeryVerbose : Verbose() {
     }
 
     override fun afterGetText(element: SeleniumWebElement, driver: WebDriver, text: String) {
-        log("has retreived text: $text from element: $element.")
+        log("has retrieved text: $text from element: $element.")
     }
 }
 
