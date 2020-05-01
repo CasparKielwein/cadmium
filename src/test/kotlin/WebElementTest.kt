@@ -20,4 +20,12 @@ internal class TestWebElement {
         element(Id("searchInput")). enter("cheesecake", replace = true)
         assertEquals("cheesecake", element(Id("searchInput")).value)
     }
+
+    @Test
+    fun testHasElement() {
+        val mainPage = headlessFirefox().open(URL("https://en.wikipedia.org/wiki"))
+
+        assert(!mainPage.hasElement(Id("arglblargl")))
+        assert(mainPage.hasElement(Id("From_today's_featured_article")))
+    }
 }

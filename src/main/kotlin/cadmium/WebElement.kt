@@ -181,6 +181,12 @@ class WebElement(
 }
 
 /**
+ * @param attribute Name of the attribute to search for
+ * @return true if the attribute exists for the Element, false if not
+ */
+fun WebElement.has(attribute: String) = this.getAttribute(attribute) != null
+
+/**
  * Bundles location functions with objects needed
  */
 sealed class ElementLocator {

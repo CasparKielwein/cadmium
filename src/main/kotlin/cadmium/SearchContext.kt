@@ -31,3 +31,9 @@ interface SearchContext {
      */
     fun elements(loc: Locator): List<WebElement>
 }
+
+/**
+ * @param loc mechanism used to search for elements
+ * @return true if page has an element found with given locator, false if not
+ */
+fun SearchContext.hasElement(loc: Locator) = this.elements(loc).isNotEmpty()

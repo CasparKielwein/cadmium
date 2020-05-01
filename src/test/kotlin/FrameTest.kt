@@ -2,7 +2,6 @@ package cadmium_test
 
 import cadmium.*
 import cadmium.firefox.headlessFirefox
-import test.hasElement
 import java.net.URL
 import kotlin.test.Test
 import kotlin.test.assertEquals
