@@ -24,7 +24,7 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
     //selenium plugin
     implementation("org.seleniumhq.selenium:selenium-firefox-driver:3.141.59")

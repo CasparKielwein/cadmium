@@ -64,24 +64,14 @@ class DefaultWaiterImpl(b: Browser) : Waiter {
 
     @UseExperimental(ExperimentalTime::class)
     override fun <T> waitUntil(timeOut: Duration, condition: Waiter.() -> T): T =
-        waitUntil(
             WebDriverWait(driver, timeOut.inSeconds.toLong())
                 .ignoring(org.openqa.selenium.NoSuchElementException::class.java)
-                    as WebDriverWait,
-            condition
-        )
+                .until {this.condition()}!!
+
 
     override fun <T> waitUntil(condition: Waiter.() -> T): T =
-        waitUntil(wait, condition)
+        wait.until { this.condition() }!!
 
     override fun <T> waitUntil(condition: ExpectedCondition<T>) =
         wait.until(condition)!!
-
-    /**
-     * uses seleniumWait to wait until a condition is true.
-     * ignores NoSuchElementException to wait for element to pop up.
-     */
-    private fun <T> waitUntil(seleniumWait: WebDriverWait, condition: Waiter.() -> T): T {
-        return seleniumWait.until { this.condition() }
-    }
 }
