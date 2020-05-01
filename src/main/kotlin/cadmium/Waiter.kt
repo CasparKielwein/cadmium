@@ -54,20 +54,25 @@ interface Waiter {
  * Default Implementation based on cadmium Browser class and selenium wait api.
  *
  * Uses selenium Wait api under the hood.
- * By default NoSuchElementExceptions are ignored to allow waiting for existence of WebElements.
+ * By default NoSuchElementExceptions and nested TimeoutExceptions are ignored to allow waiting for existence of WebElements.
+ * Ignores the TimeoutException since that might thrown by visibility checks inside the condition actions.
  * @see org.openqa.selenium.support.ui.Wait
  */
 class DefaultWaiterImpl(b: Browser) : Waiter {
+
+    private fun WebDriverWait.ignoreList() = this
+        .ignoring(org.openqa.selenium.NoSuchElementException::class.java)
+        .ignoring(org.openqa.selenium.TimeoutException::class.java)
+
     private val wait: WebDriverWait =
-        b.defaultWait.ignoring(org.openqa.selenium.NoSuchElementException::class.java) as WebDriverWait
+        b.defaultWait.ignoreList() as WebDriverWait
     private val driver: WebDriver = b.driver
 
     @UseExperimental(ExperimentalTime::class)
     override fun <T> waitUntil(timeOut: Duration, condition: Waiter.() -> T): T =
             WebDriverWait(driver, timeOut.inSeconds.toLong())
-                .ignoring(org.openqa.selenium.NoSuchElementException::class.java)
+                .ignoreList()
                 .until {this.condition()}!!
-
 
     override fun <T> waitUntil(condition: Waiter.() -> T): T =
         wait.until { this.condition() }!!

@@ -106,7 +106,7 @@ open class Verbose(
 /**
  * VeryVerbose logs every possible action
  */
-class VeryVerbose : Verbose() {
+class VeryVerbose(log: (String) -> Unit = { text: String -> System.err.println(text) }) : Verbose(log) {
 
     override fun afterAlertAccept(driver: WebDriver) {
         log("has accepted alert.")
