@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.Select
 class SelectOptions(private val element: WebElement) {
 
     private val option
-        get() = Select(element.actualElement)
+        get() = Select(element.rawElement)
 
     /**
      * Select the option from option by given locator

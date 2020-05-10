@@ -2,32 +2,54 @@ package cadmium
 
 import cadmium.util.modifierKey
 import org.openqa.selenium.Keys
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
 /**
  * Core Class representing a single Web Element and its possible Interactions
  *
- * WebElement interactions are lazy.
- * The selenium findElement functions are only called on interactions like click or enter.
- * They are not called on construction of WebElement itself.
- *
- * This means that all interactions throw Exceptions when Element has become stale or cannot be found.
+ * Construction of WebElement can throw Exceptions, when the element is not found
+ * All interactions can throw Exceptions when Element has become stale.
+ * Interactions, which require the element to be visible will throw execptions if it is not.
  *
  * WebElement forwards most calls to selenium.WebElement.
  * Use its Documentation for detailed information.
  * @see org.openqa.selenium.WebElement
  *
- * @property find ElementLocator used to search for the element when interacting with it
  * @property wait default Wait, Methods use when trying to interact with WebElements
- * @property locator Selenium Locator used to retrieve Element
+ * @property rawElement org.openqa.selenium.WebElement wrapped in this
  */
-class WebElement(
-    private val find: ElementLocator,
-    private var wait: WebDriverWait,
-    private val locator: Locator
-) : SearchContext {
+class WebElement : SearchContext {
+    private var wait: WebDriverWait
+    internal val rawElement: org.openqa.selenium.WebElement
+
+    /**
+     * Construct a WebElement from a locator
+     *
+     * @param find ElementLocator used to search for the element when interacting with it
+     * @param locator Cadmium Locator used to retrieve Element
+     */
+    constructor(
+        find: ElementLocator,
+        locator: Locator,
+        wait: WebDriverWait
+    ) {
+        this.wait = wait
+        this.rawElement = find(locator, wait)
+    }
+
+    /**
+     * Construct a WebElement to wrap a org.openqa.selenium.WebElement
+     *
+     * @param rawElement org.openqa.selenium.WebElement wrapped by this WebElement
+     */
+    constructor(
+        rawElement: org.openqa.selenium.WebElement,
+        wait: WebDriverWait
+    ) {
+        this.wait = wait
+        this.rawElement = rawElement
+    }
 
     /**
      * Get a nested WebElement and apply given actions on it
@@ -38,7 +60,7 @@ class WebElement(
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(NestedLocator(this), wait, loc)
+        val e = WebElement(NestedLocator(this), loc, wait)
         e.actions()
         return e
     }
@@ -52,9 +74,9 @@ class WebElement(
      * @see element
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return find(locator)
+        return rawElement
             .findElements(loc.by)
-            .map { WebElement(NestedLocator(this), waiter, loc) }
+            .map { WebElement(it, waiter) }
     }
 
     /**
@@ -71,8 +93,8 @@ class WebElement(
      * greater then 0.
      */
     fun click(): WebElement {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
-        find(locator).click()
+        wait.until(ExpectedConditions.elementToBeClickable(rawElement))
+        rawElement.click()
         return this
     }
 
@@ -85,23 +107,25 @@ class WebElement(
      * @return this to allow chaining of operations
      */
     fun enter(vararg text: CharSequence, replace: Boolean = false): WebElement {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
+        wait.until(ExpectedConditions.visibilityOf(rawElement))
         if (replace) {
             //select all current text by pressing control/command + a and delete it
-            find(locator).sendKeys(Keys.chord(modifierKey(), "a"),Keys.DELETE)
+            rawElement.sendKeys(Keys.chord(modifierKey(), "a"), Keys.DELETE)
         }
-        find(locator).sendKeys(*text)
+        rawElement.sendKeys(*text)
         return this
     }
 
     /**
      * If this element is a text entry element, this will clear the value.
      *
+     * Wait default timeout for the element to become visible.
+     *
      * @return this, to allow chaining of operation.
      */
     fun clear(): WebElement {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locator.by))
-        find(locator).clear()
+        wait.until(ExpectedConditions.visibilityOf(rawElement))
+        rawElement.clear()
         return this
     }
 
@@ -114,7 +138,7 @@ class WebElement(
      * @return this to allow chaining of operations
      */
     fun submit(): WebElement {
-        find(locator).submit()
+        rawElement.submit()
         return this
     }
 
@@ -122,7 +146,7 @@ class WebElement(
      * Get Text of WebElement
      */
     val text: String
-        get() = find(locator).text
+        get() = rawElement.text
 
     /**
      * Determine whether or not this element is selected or not.
@@ -130,7 +154,7 @@ class WebElement(
      * This operation only applies to input elements such as checkboxes, options in a select and radio buttons.
      */
     val selected: Boolean
-        get() = find(locator).isSelected
+        get() = rawElement.isSelected
 
     /**
      * Determine if an element is enabled or not.
@@ -138,13 +162,13 @@ class WebElement(
      * It is true if element is enabled (All elements apart from disabled input elements) and false if otherwise.
      */
     val enabled: Boolean
-        get() = find(locator).isEnabled
+        get() = rawElement.isEnabled
 
     /**
      * Is this element displayed or not?
      */
     val displayed: Boolean
-        get() = find(locator).isDisplayed
+        get() = rawElement.isDisplayed
 
     /**
      * Attribute value of element or null if no value exists
@@ -163,7 +187,7 @@ class WebElement(
      *
      * See: https://www.seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute-java.lang.String-
      */
-    fun getAttribute(name: String): String? = find(locator).getAttribute(name)
+    fun getAttribute(name: String): String? = rawElement.getAttribute(name)
 
     /**
      * Executes action on this. Visitor for DSL functions
@@ -172,12 +196,6 @@ class WebElement(
      * @return value returned by action
      */
     fun <T> with(action: WebElement.() -> T) = this.action()
-
-    /**
-     * org.openqa.selenium.Webelement contained in this
-     */
-    internal val actualElement: org.openqa.selenium.WebElement
-        get() = find(locator)
 }
 
 /**
@@ -190,19 +208,25 @@ fun WebElement.has(attribute: String) = this.getAttribute(attribute) != null
  * Bundles location functions with objects needed
  */
 sealed class ElementLocator {
-    abstract operator fun invoke(loc: Locator): org.openqa.selenium.WebElement
+    abstract operator fun invoke(loc: Locator, wait: WebDriverWait): org.openqa.selenium.WebElement
 }
 
 /**
  * Locate Elements through WebDriver
  */
-class DriverLocator(private val driver: WebDriver) : ElementLocator() {
-    override fun invoke(loc: Locator) = driver.findElement(loc.by)!!
+object DriverLocator : ElementLocator() {
+    override fun invoke(loc: Locator, wait: WebDriverWait) =
+        wait.until(ExpectedConditions.presenceOfElementLocated(loc.by))!!
 }
 
 /**
  * Locate Elements nested in other Element
  */
 class NestedLocator(private val element: WebElement) : ElementLocator() {
-    override fun invoke(loc: Locator) = element.actualElement.findElement(loc.by)!!
+    override fun invoke(loc: Locator, wait: WebDriverWait): org.openqa.selenium.WebElement {
+        //FIXME this might match wider than the find call
+        //for the nested element.
+        wait.until(ExpectedConditions.presenceOfElementLocated(loc.by))
+        return element.rawElement.findElement(loc.by)!!
+    }
 }
