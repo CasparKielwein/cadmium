@@ -20,7 +20,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * @property rawElement org.openqa.selenium.WebElement wrapped in this
  */
 class WebElement : SearchContext {
-    private var wait: WebDriverWait
+    internal var wait: WebDriverWait
     internal val rawElement: org.openqa.selenium.WebElement
 
     /**
