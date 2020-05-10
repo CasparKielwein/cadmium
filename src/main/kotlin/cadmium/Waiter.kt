@@ -18,7 +18,7 @@ fun waitFor(time: Duration) {
 /**
  * Common Interface providing methods to wait for different Conditions
  *
- * @sample cadmium_test.TestBrowser.testWaiter
+ * @sample cadmium_test.TestWaiter.testWaitDsl
  */
 interface Waiter {
     /**
