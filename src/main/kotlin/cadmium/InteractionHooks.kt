@@ -4,6 +4,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener
+import java.util.*
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -83,7 +84,7 @@ open class Verbose(
         if (keysToSend == null)
             log("will send: clear element: $element")
         else
-            log("will send: $keysToSend to element: $element")
+            log("will send: ${Arrays.toString(keysToSend)} to element: $element")
     }
 
     override fun beforeScript(script: String, driver: WebDriver) {
@@ -147,7 +148,7 @@ class VeryVerbose(log: (String) -> Unit = { text: String -> System.err.println(t
         if (keysToSend == null)
             log("has cleared element $element.")
         else
-            log("has entered: $keysToSend to element $element.")
+            log("has entered: ${Arrays.toString(keysToSend)} to element $element.")
     }
 
     override fun afterScript(script: String, driver: WebDriver) {

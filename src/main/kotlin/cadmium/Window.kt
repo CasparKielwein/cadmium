@@ -19,7 +19,7 @@ class Window<T : Page>(val page: T) : SearchContext by page {
         get() = page.driver
 
     /**
-     * Closes this window. close invalidates this object.
+     * Closes this window and invalidates this object.
      */
     fun close() {
         if (d.windowHandle != handle)
@@ -39,8 +39,9 @@ class Window<T : Page>(val page: T) : SearchContext by page {
         set(value) { d.manage().window().size = value }
 
     /**
-     * Position of the current window. This is relative to the upper left corner of the
-     * screen, synonymous
+     * Position of the current window.
+     *
+     * This is relative to the upper left corner of the screen.
      */
     var position  : Point
         get() = d.manage().window().position!!
