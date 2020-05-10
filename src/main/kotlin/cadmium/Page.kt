@@ -79,11 +79,6 @@ open class Page(private var baseURL: URL, internal val b: Browser, private val w
     fun click(loc: Locator) = element(loc).click()
 
     /**
-     * Shorthand for clicking on input element with given text as value
-     */
-    fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
-
-    /**
      * Waits for an Alert dialog to appear
      *
      * @return handle to present Alert
