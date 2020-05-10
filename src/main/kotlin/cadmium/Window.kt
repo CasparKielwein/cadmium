@@ -54,6 +54,11 @@ class Window<T : Page>(val page: T) : SearchContext by page {
      * Set the current window to full-screen if it is not already at full-screen
      */
     fun fullscreen() = d.manage().window().fullscreen()
+
+    /**
+     * Access to navigation of browser to other Pages.
+     */
+    fun navigate() = page.navigate()
 }
 
 /**

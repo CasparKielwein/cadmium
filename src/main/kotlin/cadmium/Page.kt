@@ -102,6 +102,19 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      */
     val currentUrl
         get() = b.driver.currentUrl!!
+
+    /**
+     * Refresh the current page
+     */
+    fun refresh() = b.driver.navigate().refresh()
+
+    /**
+     * Access to navigation of browser to other Pages.
+     *
+     * @Note Navigation might invalidate this object!
+     * Prefer to continue using the object returned by the calls in Navigation.
+     */
+    fun navigate() = Navigation(b)
 }
 
 /**
