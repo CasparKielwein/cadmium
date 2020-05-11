@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.Select
 class SelectOptions(private val element: WebElement) {
 
     private val option
-        get() = Select(element.actualElement)
+        get() = Select(element.rawElement)
 
     /**
      * Select the option from option by given locator
@@ -71,6 +71,19 @@ class SelectOptions(private val element: WebElement) {
      */
     val allOptions
         get() = element.elements(Tag("option"))
+
+    /**
+     * List of all currently selected options in this element
+     */
+    val allSelected
+        get() = option.allSelectedOptions.map { WebElement(it, element.wait) }
+
+    /**
+     * @return The first selected option in this element
+     * @throws NoSuchElementException If no option is selected
+     */
+    val firstSelected
+        get() = WebElement(option.firstSelectedOption, element.wait)
 }
 
 sealed class SelectLocator

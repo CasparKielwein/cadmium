@@ -28,7 +28,7 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(DriverLocator(b.driver), b.defaultWait, loc)
+        val e = WebElement(DriverLocator, loc, b.defaultWait)
         e.actions()
         return e
     }
@@ -40,13 +40,9 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * @param waiter optionally controls how long WebDriver is supposed to wait until empty List is returned
      * @return A list of all WebElements, or an empty list if nothing matches
      * @see element
-     *
-     * At the moment elements is eager and the WebElements returned are not evaluated lazily
-     * as claimed in their documentation.
-     * Todo: return a lazily evaluated range of WebElements instead
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(DriverLocator(b.driver), waiter, loc) }
+        return b.driver.findElements(loc.by).map { WebElement(DriverLocator, loc, waiter) }
     }
 
     /**
@@ -152,9 +148,10 @@ internal val Page.driver: WebDriver
 /**
  * Returns unwrapped selenium.WebDriver.
  *
- * Note:
- * This function is intended for use, when cadmium lacks a feature
+ * Note: Unstable!
+ * This function is intended for use when cadmium lacks a feature
  * and access to the selenium WebDriver is required.
+ *
  * Anything done with the raw webdriver might be broken
  * by cadmium code later.
  */

@@ -18,7 +18,7 @@ fun Page.inFrame(index : Index, action: Page.() -> Unit) = actOnFrame({it.frame(
  *
  * @param loc locator to retrieve WebElement identifying the frame
  */
-fun Page.inFrame(loc: Locator, action: Page.() -> Unit) = actOnFrame({it.frame(element(loc).actualElement)}, action)
+fun Page.inFrame(loc: Locator, action: Page.() -> Unit) = actOnFrame({it.frame(element(loc).rawElement)}, action)
 
 /**
  * Helper function to get frame and execute action on it.
