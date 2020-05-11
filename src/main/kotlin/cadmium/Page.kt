@@ -11,32 +11,13 @@ import java.net.URL
  *
  * Page is one of the core Classes of cadmium.
  * Extend it with your own classes to implement page objects.
+ * Extend UrlBackedPage if you like opening pages with relative paths.
  *
- * @property baseURL property that is used to resolve all relative URL
  * @property b Browser instance driving this page
+ * @property waiter implementation of Waiter used by this page.
  */
-open class Page(private var baseURL: URL, internal val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
+open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
     SearchContext, Waiter by waiter {
-
-    fun open(url: URL, actions: Page.() -> Unit = {}): Window<Page> {
-        baseURL = url
-        b.driver.get(baseURL.toString())
-        actions()
-        return Window(this)
-    }
-
-    /**
-     * Open given relative URL from current baseURL
-     *
-     * @param relativeUrl relative URL as seen from current baseURL
-     * @param actions executed on Page after opening URL
-     * @sample cadmium_test.TestBrowser.testRelativeURL
-     */
-    fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Window<Page> {
-        b.driver.get("$baseURL/$relativeUrl")
-        actions()
-        return Window(this)
-    }
 
     /**
      * Get a WebElement and apply given actions on it
@@ -77,11 +58,6 @@ open class Page(private var baseURL: URL, internal val b: Browser, private val w
      * Shorthand for click on element given by locator ( element(loc).click() )
      */
     fun click(loc: Locator) = element(loc).click()
-
-    /**
-     * Shorthand for clicking on input element with given text as value
-     */
-    fun click(text: String) = element(XPath("//input[@value=\"$text\"]")).click()
 
     /**
      * Waits for an Alert dialog to appear
@@ -126,6 +102,34 @@ open class Page(private var baseURL: URL, internal val b: Browser, private val w
      */
     val currentUrl
         get() = b.driver.currentUrl!!
+}
+
+/**
+ * Specialization of Page class which supports relative URLs.
+ *
+ * @property baseURL all relative URLs are assumed to be relative to this path.
+ */
+open class UrlBackedPage(private var baseURL: URL, b: Browser) : Page(b) {
+
+    fun open(url: URL, actions: Page.() -> Unit = {}): Window<Page> {
+        baseURL = url
+        b.driver.get(baseURL.toString())
+        actions()
+        return Window(this)
+    }
+
+    /**
+     * Open given relative URL from current baseURL
+     *
+     * @param relativeUrl relative URL as seen from current baseURL
+     * @param actions executed on Page after opening URL
+     * @sample cadmium_test.TestBrowser.testRelativeURL
+     */
+    fun open(relativeUrl: String, actions: Page.() -> Unit = {}): Window<Page> {
+        b.driver.get("$baseURL/$relativeUrl")
+        actions()
+        return Window(this)
+    }
 }
 
 /**

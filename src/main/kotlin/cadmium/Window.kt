@@ -4,7 +4,6 @@ import cadmium.util.modifierKey
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.Keys
 import org.openqa.selenium.Point
-import java.net.URL
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
@@ -52,7 +51,7 @@ class Window<T : Page>(val page: T) : SearchContext by page {
     fun maximize() = d.manage().window().maximize()
 
     /**
-     * Fullscreen the current window if it is not already fullscreen
+     * Set the current window to full-screen if it is not already at full-screen
      */
     fun fullscreen() = d.manage().window().fullscreen()
 }
@@ -67,13 +66,16 @@ class Window<T : Page>(val page: T) : SearchContext by page {
  * Might open a new window depending on target attribute of link.
  * In this case the new window will have to be closed manually after use.
  */
-fun Page.open(link: Locator): Window<Page> {
+fun<T : Page> T.open(link: Locator): Window<T> {
     element(link).click()
     return Window(this)
 }
 
 /**
  * Opens a link in a new window and closes the window after use.
+ *
+ * Currently the opened page will not be backed by an URL
+ * and thus not support relative paths for opening new Pages.
  *
  * @param link Locator which specifies the target
  * @param timeout wait for this long for new window to open.
@@ -91,7 +93,7 @@ fun Page.inTempWindow(link: Locator, timeout: Duration = 10.seconds, action: Pag
     assert(oldHandle != latestHandle)
     driver.switchTo().window(latestHandle)
 
-    Page(URL(currentUrl), b).action()
+    Page(b).action()
 
     driver.close()
     assert(driver.windowHandles.isNotEmpty())

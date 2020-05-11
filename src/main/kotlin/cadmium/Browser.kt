@@ -43,8 +43,8 @@ open class Browser(
      * @param url URL of new page
      * @return Page opened at the given URl
      */
-    fun open(url: URL): Window<Page> {
-        val res =  Page(url, this)
+    fun open(url: URL): Window<UrlBackedPage> {
+        val res =  UrlBackedPage(url, this)
         res.open(url)
         return Window(res)
     }
@@ -55,7 +55,7 @@ open class Browser(
      * @param url URL of new page
      * @param actions Extension function Page executed after opening it.
      */
-    fun browse(url: URL, actions: Page.() -> Unit) {
+    fun browse(url: URL, actions: UrlBackedPage.() -> Unit) {
         open(url).page.actions()
         hooks.beforeClose()
         driver.close()
