@@ -10,7 +10,6 @@ internal class TestWebElement {
 
     @Test
     fun testEnterReplace() = headlessFirefox().browse(URL("https://en.wikipedia.org/wiki")) {
-
         element(Id("searchInput")). enter("cheese")
         assertEquals("cheese", element(Id("searchInput")).value)
 
@@ -27,5 +26,24 @@ internal class TestWebElement {
 
         assert(!mainPage.hasElement(Id("arglblargl")))
         assert(mainPage.hasElement(Id("From_today's_featured_article")))
+    }
+
+    @Test
+    fun testElementsList()  = headlessFirefox().browse(URL("http://the-internet.herokuapp.com/drag_and_drop")) {
+        val columns = elements(ClassName("column"))
+
+        assertEquals(2, columns.size)
+        assertEquals("A", columns[0].text)
+        assertEquals("B", columns[1].text)
+    }
+
+    @Test
+    fun testNestedList() = headlessFirefox().browse(URL("http://the-internet.herokuapp.com/drag_and_drop")) {
+        val form = element(Id("columns"))
+        val columns = form.elements(ClassName("column"))
+
+        assertEquals(2, columns.size)
+        assertEquals("A", columns[0].text)
+        assertEquals("B", columns[1].text)
     }
 }

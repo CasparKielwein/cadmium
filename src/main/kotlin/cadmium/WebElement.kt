@@ -24,21 +24,6 @@ class WebElement : SearchContext {
     internal val rawElement: org.openqa.selenium.WebElement
 
     /**
-     * Construct a WebElement from a locator
-     *
-     * @param find ElementLocator used to search for the element when interacting with it
-     * @param locator Cadmium Locator used to retrieve Element
-     */
-    constructor(
-        find: ElementLocator,
-        locator: Locator,
-        wait: WebDriverWait
-    ) {
-        this.wait = wait
-        this.rawElement = find(locator, wait)
-    }
-
-    /**
      * Construct a WebElement to wrap a org.openqa.selenium.WebElement
      *
      * @param rawElement org.openqa.selenium.WebElement wrapped by this WebElement
@@ -51,6 +36,12 @@ class WebElement : SearchContext {
         this.rawElement = rawElement
     }
 
+    private fun findNested(loc: Locator): org.openqa.selenium.WebElement {
+        //FIXME this might match wider than the find call for the nested element.
+        wait.until(ExpectedConditions.presenceOfElementLocated(loc.by))
+        return rawElement.findElement(loc.by)!!
+    }
+
     /**
      * Get a nested WebElement and apply given actions on it
      *
@@ -60,7 +51,7 @@ class WebElement : SearchContext {
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(NestedLocator(this), loc, wait)
+        val e = WebElement(findNested(loc), wait)
         e.actions()
         return e
     }
@@ -203,30 +194,3 @@ class WebElement : SearchContext {
  * @return true if the attribute exists for the Element, false if not
  */
 fun WebElement.has(attribute: String) = this.getAttribute(attribute) != null
-
-/**
- * Bundles location functions with objects needed
- */
-sealed class ElementLocator {
-    abstract operator fun invoke(loc: Locator, wait: WebDriverWait): org.openqa.selenium.WebElement
-}
-
-/**
- * Locate Elements through WebDriver
- */
-object DriverLocator : ElementLocator() {
-    override fun invoke(loc: Locator, wait: WebDriverWait) =
-        wait.until(ExpectedConditions.presenceOfElementLocated(loc.by))!!
-}
-
-/**
- * Locate Elements nested in other Element
- */
-class NestedLocator(private val element: WebElement) : ElementLocator() {
-    override fun invoke(loc: Locator, wait: WebDriverWait): org.openqa.selenium.WebElement {
-        //FIXME this might match wider than the find call
-        //for the nested element.
-        wait.until(ExpectedConditions.presenceOfElementLocated(loc.by))
-        return element.rawElement.findElement(loc.by)!!
-    }
-}

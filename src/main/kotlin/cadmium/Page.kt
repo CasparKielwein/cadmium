@@ -28,7 +28,10 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(DriverLocator, loc, b.defaultWait)
+        val e = WebElement(
+            b.defaultWait.until(ExpectedConditions.presenceOfElementLocated(loc.by))!!,
+            b.defaultWait
+        )
         e.actions()
         return e
     }
@@ -42,7 +45,7 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * @see element
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(DriverLocator, loc, waiter) }
+        return b.driver.findElements(loc.by).map { WebElement(it, waiter) }
     }
 
     /**
