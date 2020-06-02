@@ -17,24 +17,12 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * @see org.openqa.selenium.WebElement
  *
  * @property wait default Wait, Methods use when trying to interact with WebElements
- * @property rawElement org.openqa.selenium.WebElement wrapped in this
+ * @property rawElement org.openqa.selenium.WebElement wrapped in this object.
+ * Access to rawElement is possible for cases where selenium functionality not provided
+ * by cadmium is required. Access to rawElement is considered to be unstable
+ * and can be broken without a change in major version number.
  */
-class WebElement : SearchContext {
-    internal var wait: WebDriverWait
-    internal val rawElement: org.openqa.selenium.WebElement
-
-    /**
-     * Construct a WebElement to wrap a org.openqa.selenium.WebElement
-     *
-     * @param rawElement org.openqa.selenium.WebElement wrapped by this WebElement
-     */
-    constructor(
-        rawElement: org.openqa.selenium.WebElement,
-        wait: WebDriverWait
-    ) {
-        this.wait = wait
-        this.rawElement = rawElement
-    }
+class WebElement(val rawElement: org.openqa.selenium.WebElement, internal var wait: WebDriverWait) : SearchContext {
 
     private fun findNested(loc: Locator): org.openqa.selenium.WebElement {
         //FIXME this might match wider than the find call for the nested element.
