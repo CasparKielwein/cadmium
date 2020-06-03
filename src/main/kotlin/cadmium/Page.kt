@@ -30,7 +30,9 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
         val e = WebElement(
             b.defaultWait.until(ExpectedConditions.presenceOfElementLocated(loc.by))!!,
-            b.defaultWait
+            b.defaultWait,
+            b.driver,
+            autoScroll = false
         )
         e.actions()
         return e
@@ -45,7 +47,7 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * @see element
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(it, waiter) }
+        return b.driver.findElements(loc.by).map { WebElement(it, waiter, b.driver, autoScroll = false) }
     }
 
     /**
