@@ -28,8 +28,10 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
+        //don't use element returned by until as that does not seem to trigger ChangeEvents.
+        b.defaultWait.until(ExpectedConditions.presenceOfElementLocated(loc.by))
         val e = WebElement(
-            b.defaultWait.until(ExpectedConditions.presenceOfElementLocated(loc.by))!!,
+            b.driver.findElement(loc.by)!!,
             b.defaultWait,
             b.driver,
             autoScroll = false
