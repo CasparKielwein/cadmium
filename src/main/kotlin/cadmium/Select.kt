@@ -86,6 +86,9 @@ class SelectOptions(private val element: WebElement) {
         get() = WebElement(option.firstSelectedOption, element.wait, element.driver, element.autoScroll)
 }
 
+/**
+ * Locator Classes which can be only used to select options.
+ */
 sealed class SelectLocator
 
 /**

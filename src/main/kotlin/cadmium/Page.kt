@@ -15,9 +15,13 @@ import java.net.URL
  *
  * @property b Browser instance driving this page
  * @property waiter implementation of Waiter used by this page.
+ * @property autoScroll if true, cadmium will try to scroll WebElement into view
+ * before click() or enter() are executed.
  */
 open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWaiterImpl(b)) :
     SearchContext, Waiter by waiter {
+
+    var autoScroll : Boolean = false
 
     /**
      * Get a WebElement and apply given actions on it
@@ -34,7 +38,7 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
             b.driver.findElement(loc.by)!!,
             b.defaultWait,
             b.driver,
-            autoScroll = false
+            autoScroll
         )
         e.actions()
         return e
@@ -49,7 +53,7 @@ open class Page(internal val b: Browser, private val waiter: Waiter = DefaultWai
      * @see element
      */
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
-        return b.driver.findElements(loc.by).map { WebElement(it, waiter, b.driver, autoScroll = false) }
+        return b.driver.findElements(loc.by).map { WebElement(it, waiter, b.driver, autoScroll) }
     }
 
     /**
@@ -144,6 +148,17 @@ open class UrlBackedPage(private var baseURL: URL, b: Browser) : Page(b) {
  */
 fun <T : Page> T.visit(actions: T.() -> Unit) {
     actions()
+}
+
+/**
+ * Scope function which executes given action with autoscroll enabled
+ *
+ * @param actions applied to page object
+ */
+fun <T : Page> T.withAutoScroll(actions: T.() -> Unit) {
+    autoScroll = true
+    actions()
+    autoScroll = false
 }
 
 /**
