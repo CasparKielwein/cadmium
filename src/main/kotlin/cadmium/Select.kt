@@ -76,16 +76,19 @@ class SelectOptions(private val element: WebElement) {
      * List of all currently selected options in this element
      */
     val allSelected
-        get() = option.allSelectedOptions.map { WebElement(it, element.wait) }
+        get() = option.allSelectedOptions.map { WebElement(it, element.wait, element.driver, element.autoScroll) }
 
     /**
      * @return The first selected option in this element
      * @throws NoSuchElementException If no option is selected
      */
     val firstSelected
-        get() = WebElement(option.firstSelectedOption, element.wait)
+        get() = WebElement(option.firstSelectedOption, element.wait, element.driver, element.autoScroll)
 }
 
+/**
+ * Locator Classes which can be only used to select options.
+ */
 sealed class SelectLocator
 
 /**

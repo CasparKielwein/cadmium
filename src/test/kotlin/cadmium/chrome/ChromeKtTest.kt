@@ -12,9 +12,10 @@ internal class TestChrome {
     @Test
     fun testMinimalExample() {
         headlessChrome().browse(URL("https://en.wikipedia.org/wiki")) {
-            element(Id("searchInput"))
-                .enter("cheese")
-                .enter(Keys.ENTER)
+            element(Id("searchInput")) {
+                enter("cheese")
+                enter(Keys.ENTER)
+            }
 
             assertEquals("Cheese", element(Id("firstHeading")).text)
         }

@@ -2,6 +2,8 @@ package cadmium
 
 import cadmium.util.modifierKey
 import org.openqa.selenium.Keys
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -16,25 +18,18 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * Use its Documentation for detailed information.
  * @see org.openqa.selenium.WebElement
  *
+ * @property autoScroll if true, calls to enter and click will try to scroll
+ * the element into view if it is not displayed.
  * @property wait default Wait, Methods use when trying to interact with WebElements
- * @property rawElement org.openqa.selenium.WebElement wrapped in this
+ * @property rawElement org.openqa.selenium.WebElement wrapped in this object.
+ * Access to rawElement is possible for cases where selenium functionality not provided
+ * by cadmium is required. Access to rawElement is considered to be unstable
+ * and can be broken without a change in major version number.
  */
-class WebElement : SearchContext {
-    internal var wait: WebDriverWait
-    internal val rawElement: org.openqa.selenium.WebElement
-
-    /**
-     * Construct a WebElement to wrap a org.openqa.selenium.WebElement
-     *
-     * @param rawElement org.openqa.selenium.WebElement wrapped by this WebElement
-     */
-    constructor(
-        rawElement: org.openqa.selenium.WebElement,
-        wait: WebDriverWait
-    ) {
-        this.wait = wait
-        this.rawElement = rawElement
-    }
+class WebElement(val rawElement: org.openqa.selenium.WebElement,
+                 internal var wait: WebDriverWait,
+                 internal val driver: WebDriver,
+                 var autoScroll: Boolean) : SearchContext {
 
     private fun findNested(loc: Locator): org.openqa.selenium.WebElement {
         //FIXME this might match wider than the find call for the nested element.
@@ -51,7 +46,7 @@ class WebElement : SearchContext {
      * if multiple elements match the locator, the first is returned
      */
     override fun element(loc: Locator, actions: WebElement.() -> Unit): WebElement {
-        val e = WebElement(findNested(loc), wait)
+        val e = WebElement(findNested(loc), wait, driver, autoScroll)
         e.actions()
         return e
     }
@@ -67,7 +62,7 @@ class WebElement : SearchContext {
     override fun elements(loc: Locator, waiter: WebDriverWait): List<WebElement> {
         return rawElement
             .findElements(loc.by)
-            .map { WebElement(it, waiter) }
+            .map { WebElement(it, waiter, driver, autoScroll) }
     }
 
     /**
@@ -78,15 +73,14 @@ class WebElement : SearchContext {
     /**
      * Click this element, wait default timeout for it to become visible
      *
-     * @return this to allow chaining of operations
-     *
      * The element must be visible and it must have a height and width
      * greater then 0.
      */
-    fun click(): WebElement {
+    fun click() {
+        if (autoScroll && !displayed)
+            scrollIntoView()
         wait.until(ExpectedConditions.elementToBeClickable(rawElement))
         rawElement.click()
-        return this
     }
 
     /**
@@ -95,16 +89,15 @@ class WebElement : SearchContext {
      * @param text character sequence to send to the element
      * @param replace if true, [text] will replace the current content of WebElement.
      * Use replace instead of a separate clear call, if the additional onChange event triggered by clear causes problems.
-     * @return this to allow chaining of operations
      */
-    fun enter(vararg text: CharSequence, replace: Boolean = false): WebElement {
-        wait.until(ExpectedConditions.visibilityOf(rawElement))
+    fun enter(vararg text: CharSequence, replace: Boolean = false) {
+        if (autoScroll && !displayed)
+            scrollIntoView()
         if (replace) {
             //select all current text by pressing control/command + a and delete it
             rawElement.sendKeys(Keys.chord(modifierKey(), "a"), Keys.DELETE)
         }
         rawElement.sendKeys(*text)
-        return this
     }
 
     /**
@@ -115,7 +108,6 @@ class WebElement : SearchContext {
      * @return this, to allow chaining of operation.
      */
     fun clear(): WebElement {
-        wait.until(ExpectedConditions.visibilityOf(rawElement))
         rawElement.clear()
         return this
     }
@@ -132,6 +124,11 @@ class WebElement : SearchContext {
         rawElement.submit()
         return this
     }
+
+    /**
+     * Will scroll until the WebElement is in the current view.
+     */
+    fun scrollIntoView() = Actions(driver).moveToElement(rawElement)
 
     /**
      * Get Text of WebElement
