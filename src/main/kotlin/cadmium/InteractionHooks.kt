@@ -19,9 +19,16 @@ import org.openqa.selenium.WebElement as SeleniumWebElement
 open class BrowserEventListener : AbstractWebDriverEventListener() {
 
     /**
-     * called before closing a window
+     * Called before closing a window
      */
     open fun beforeClose() {}
+
+    /**
+     * Called if an exception is thrown during a call to cadmium.Browser.browse before cleanup is done.
+     *
+     * Can be used to react to failures of test assertions before the browser window is closed.
+     */
+    open fun onBrowsingError(ex: Throwable) {}
 }
 
 /**
