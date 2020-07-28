@@ -55,3 +55,9 @@ Cadmium selenide has a beautiful red color.
     * Junit5
     * Firefox Geckodriver <https://github.com/mozilla/geckodriver/>
     * chromedriver <https://sites.google.com/a/chromium.org/chromedriver/>
+
+## Development of Cadmium
+How to run a single test case:
+```sh
+gradle test --info --tests TestBrowser.testMinimalExample
+```
