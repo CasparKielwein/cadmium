@@ -24,7 +24,7 @@ open class Browser(
 
     val driver: WebDriver
     val defaultWait: WebDriverWait
-    private var hooks: BrowserEventListener
+    internal var hooks: BrowserEventListener
 
     init {
         //wrap normal WebDriver to catch fired events.
@@ -44,7 +44,7 @@ open class Browser(
      * @return Page opened at the given URl
      */
     fun open(url: URL): Window<UrlBackedPage> {
-        val res =  UrlBackedPage(url, this)
+        val res = UrlBackedPage(url, this)
         res.open(url)
         return Window(res)
     }
@@ -56,9 +56,15 @@ open class Browser(
      * @param actions Extension function Page executed after opening it.
      */
     fun browse(url: URL, actions: UrlBackedPage.() -> Unit) {
-        open(url).page.actions()
-        hooks.beforeClose()
-        driver.close()
+        try {
+            open(url).page.actions()
+        } catch (ex: Throwable) {
+            hooks.onBrowsingError(ex)
+            throw ex
+        } finally {
+            hooks.beforeClose()
+            driver.close()
+        }
     }
 }
 

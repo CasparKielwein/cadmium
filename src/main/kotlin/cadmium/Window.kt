@@ -33,18 +33,22 @@ class Window<T : Page>(val page: T) : SearchContext by page {
      * Changing it will change the outer window dimension,
      * not just the view port, synonymous to window.resizeTo() in JS.
      */
-    var size : Dimension
+    var size: Dimension
         get() = d.manage().window().size!!
-        set(value) { d.manage().window().size = value }
+        set(value) {
+            d.manage().window().size = value
+        }
 
     /**
      * Position of the current window.
      *
      * This is relative to the upper left corner of the screen.
      */
-    var position  : Point
+    var position: Point
         get() = d.manage().window().position!!
-        set(value) { d.manage().window().position = value}
+        set(value) {
+            d.manage().window().position = value
+        }
 
     /**
      * Maximizes the current window if it is not already maximized
@@ -67,7 +71,7 @@ class Window<T : Page>(val page: T) : SearchContext by page {
  * Might open a new window depending on target attribute of link.
  * In this case the new window will have to be closed manually after use.
  */
-fun<T : Page> T.open(link: Locator): Window<T> {
+fun <T : Page> T.open(link: Locator): Window<T> {
     element(link).click()
     return Window(this)
 }
@@ -94,9 +98,15 @@ fun Page.inTempWindow(link: Locator, timeout: Duration = 10.seconds, action: Pag
     assert(oldHandle != latestHandle)
     driver.switchTo().window(latestHandle)
 
-    Page(b).action()
-
-    driver.close()
-    assert(driver.windowHandles.isNotEmpty())
-    driver.switchTo().window(oldHandle)
+    try {
+        Page(b).action()
+    } catch (ex: Throwable) {
+        b.hooks.onBrowsingError(ex)
+        throw ex
+    } finally {
+        b.hooks.beforeClose()
+        driver.close()
+        assert(driver.windowHandles.isNotEmpty())
+        driver.switchTo().window(oldHandle)
+    }
 }
